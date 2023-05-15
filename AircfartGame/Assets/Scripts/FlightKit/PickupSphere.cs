@@ -1,6 +1,7 @@
 // dnSpy decompiler from Assembly-CSharp.dll class: FlightKit.PickupSphere
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityStandardAssets.ImageEffects;
 
 namespace FlightKit
@@ -8,6 +9,8 @@ namespace FlightKit
 	public class PickupSphere : MonoBehaviour
 	{
 		public static event PickupSphere.OnCollectAction OnCollectEvent;
+		[HideInInspector]
+		public UnityEvent OnCollect;
 
 		private void Start()
 		{
@@ -85,6 +88,7 @@ namespace FlightKit
 			UnityEngine.Object.DestroyObject(this.ring1);
 			UnityEngine.Object.DestroyObject(this.ring2);
 			this._isDestroyed = true;
+			OnCollect.Invoke();
 		}
 
 		public static bool growingEnabled;
