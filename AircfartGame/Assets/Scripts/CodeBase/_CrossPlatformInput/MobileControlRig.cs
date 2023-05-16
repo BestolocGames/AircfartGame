@@ -1,21 +1,19 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.MobileControlRig
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace CodeBase._CrossPlatformInput
 {
 	[ExecuteInEditMode]
 	public class MobileControlRig : MonoBehaviour
 	{
 		private void OnEnable()
 		{
-			this.CheckEnableControlRig();
+			CheckEnableControlRig();
 		}
 
 		private void Start()
 		{
-			EventSystem x = UnityEngine.Object.FindObjectOfType<EventSystem>();
+			EventSystem x = FindObjectOfType<EventSystem>();
 			if (x == null)
 			{
 				GameObject gameObject = new GameObject("EventSystem");
@@ -26,12 +24,12 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 		private void CheckEnableControlRig()
 		{
-			this.EnableControlRig(true);
+			EnableControlRig(true);
 		}
 
 		private void EnableControlRig(bool enabled)
 		{
-			foreach (object obj in base.transform)
+			foreach (object obj in this.transform)
 			{
 				Transform transform = (Transform)obj;
 				transform.gameObject.SetActive(enabled);

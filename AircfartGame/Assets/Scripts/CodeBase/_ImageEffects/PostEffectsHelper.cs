@@ -1,8 +1,6 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.ImageEffects.PostEffectsHelper
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace CodeBase._ImageEffects
 {
 	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
@@ -10,7 +8,7 @@ namespace UnityStandardAssets.ImageEffects
 	{
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			UnityEngine.Debug.Log("OnRenderImage in Helper called ...");
+			Debug.Log("OnRenderImage in Helper called ...");
 		}
 
 		private static void DrawLowLevelPlaneAlignedWithCamera(float dist, RenderTexture source, RenderTexture dest, Material material, Camera cameraForProjectionMatrix)

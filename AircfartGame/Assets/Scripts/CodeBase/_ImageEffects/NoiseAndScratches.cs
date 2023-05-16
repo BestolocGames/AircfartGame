@@ -1,8 +1,6 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.ImageEffects.NoiseAndScratches
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace CodeBase._ImageEffects
 {
 	[ExecuteInEditMode]
 	[AddComponentMenu("Image Effects/Noise/Noise and Scratches")]
@@ -13,21 +11,21 @@ namespace UnityStandardAssets.ImageEffects
 		{
 			if (!SystemInfo.supportsImageEffects)
 			{
-				base.enabled = false;
+				enabled = false;
 				return;
 			}
-			if (this.shaderRGB == null || this.shaderYUV == null)
+			if (shaderRGB == null || shaderYUV == null)
 			{
-				UnityEngine.Debug.Log("Noise shaders are not set up! Disabling noise effect.");
-				base.enabled = false;
+				Debug.Log("Noise shaders are not set up! Disabling noise effect.");
+				enabled = false;
 			}
-			else if (!this.shaderRGB.isSupported)
+			else if (!shaderRGB.isSupported)
 			{
-				base.enabled = false;
+				enabled = false;
 			}
-			else if (!this.shaderYUV.isSupported)
+			else if (!shaderYUV.isSupported)
 			{
-				this.rgbFallback = true;
+				rgbFallback = true;
 			}
 		}
 
@@ -35,60 +33,60 @@ namespace UnityStandardAssets.ImageEffects
 		{
 			get
 			{
-				if (this.m_MaterialRGB == null)
+				if (m_MaterialRGB == null)
 				{
-					this.m_MaterialRGB = new Material(this.shaderRGB);
-					this.m_MaterialRGB.hideFlags = HideFlags.HideAndDontSave;
+					m_MaterialRGB = new Material(shaderRGB);
+					m_MaterialRGB.hideFlags = HideFlags.HideAndDontSave;
 				}
-				if (this.m_MaterialYUV == null && !this.rgbFallback)
+				if (m_MaterialYUV == null && !rgbFallback)
 				{
-					this.m_MaterialYUV = new Material(this.shaderYUV);
-					this.m_MaterialYUV.hideFlags = HideFlags.HideAndDontSave;
+					m_MaterialYUV = new Material(shaderYUV);
+					m_MaterialYUV.hideFlags = HideFlags.HideAndDontSave;
 				}
-				return (this.rgbFallback || this.monochrome) ? this.m_MaterialRGB : this.m_MaterialYUV;
+				return (rgbFallback || monochrome) ? m_MaterialRGB : m_MaterialYUV;
 			}
 		}
 
 		protected void OnDisable()
 		{
-			if (this.m_MaterialRGB)
+			if (m_MaterialRGB)
 			{
-				UnityEngine.Object.DestroyImmediate(this.m_MaterialRGB);
+				DestroyImmediate(m_MaterialRGB);
 			}
-			if (this.m_MaterialYUV)
+			if (m_MaterialYUV)
 			{
-				UnityEngine.Object.DestroyImmediate(this.m_MaterialYUV);
+				DestroyImmediate(m_MaterialYUV);
 			}
 		}
 
 		private void SanitizeParameters()
 		{
-			this.grainIntensityMin = Mathf.Clamp(this.grainIntensityMin, 0f, 5f);
-			this.grainIntensityMax = Mathf.Clamp(this.grainIntensityMax, 0f, 5f);
-			this.scratchIntensityMin = Mathf.Clamp(this.scratchIntensityMin, 0f, 5f);
-			this.scratchIntensityMax = Mathf.Clamp(this.scratchIntensityMax, 0f, 5f);
-			this.scratchFPS = Mathf.Clamp(this.scratchFPS, 1f, 30f);
-			this.scratchJitter = Mathf.Clamp(this.scratchJitter, 0f, 1f);
-			this.grainSize = Mathf.Clamp(this.grainSize, 0.1f, 50f);
+			grainIntensityMin = Mathf.Clamp(grainIntensityMin, 0f, 5f);
+			grainIntensityMax = Mathf.Clamp(grainIntensityMax, 0f, 5f);
+			scratchIntensityMin = Mathf.Clamp(scratchIntensityMin, 0f, 5f);
+			scratchIntensityMax = Mathf.Clamp(scratchIntensityMax, 0f, 5f);
+			scratchFPS = Mathf.Clamp(scratchFPS, 1f, 30f);
+			scratchJitter = Mathf.Clamp(scratchJitter, 0f, 1f);
+			grainSize = Mathf.Clamp(grainSize, 0.1f, 50f);
 		}
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
-			this.SanitizeParameters();
-			if (this.scratchTimeLeft <= 0f)
+			SanitizeParameters();
+			if (scratchTimeLeft <= 0f)
 			{
-				this.scratchTimeLeft = UnityEngine.Random.value * 2f / this.scratchFPS;
-				this.scratchX = UnityEngine.Random.value;
-				this.scratchY = UnityEngine.Random.value;
+				scratchTimeLeft = Random.value * 2f / scratchFPS;
+				scratchX = Random.value;
+				scratchY = Random.value;
 			}
-			this.scratchTimeLeft -= Time.deltaTime;
+			scratchTimeLeft -= Time.deltaTime;
 			Material material = this.material;
-			material.SetTexture("_GrainTex", this.grainTexture);
-			material.SetTexture("_ScratchTex", this.scratchTexture);
-			float num = 1f / this.grainSize;
-			material.SetVector("_GrainOffsetScale", new Vector4(UnityEngine.Random.value, UnityEngine.Random.value, (float)Screen.width / (float)this.grainTexture.width * num, (float)Screen.height / (float)this.grainTexture.height * num));
-			material.SetVector("_ScratchOffsetScale", new Vector4(this.scratchX + UnityEngine.Random.value * this.scratchJitter, this.scratchY + UnityEngine.Random.value * this.scratchJitter, (float)Screen.width / (float)this.scratchTexture.width, (float)Screen.height / (float)this.scratchTexture.height));
-			material.SetVector("_Intensity", new Vector4(UnityEngine.Random.Range(this.grainIntensityMin, this.grainIntensityMax), UnityEngine.Random.Range(this.scratchIntensityMin, this.scratchIntensityMax), 0f, 0f));
+			material.SetTexture("_GrainTex", grainTexture);
+			material.SetTexture("_ScratchTex", scratchTexture);
+			float num = 1f / grainSize;
+			material.SetVector("_GrainOffsetScale", new Vector4(Random.value, Random.value, (float)Screen.width / (float)grainTexture.width * num, (float)Screen.height / (float)grainTexture.height * num));
+			material.SetVector("_ScratchOffsetScale", new Vector4(scratchX + Random.value * scratchJitter, scratchY + Random.value * scratchJitter, (float)Screen.width / (float)scratchTexture.width, (float)Screen.height / (float)scratchTexture.height));
+			material.SetVector("_Intensity", new Vector4(Random.Range(grainIntensityMin, grainIntensityMax), Random.Range(scratchIntensityMin, scratchIntensityMax), 0f, 0f));
 			Graphics.Blit(source, destination, material);
 		}
 

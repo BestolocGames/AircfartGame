@@ -1,35 +1,33 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.Utility.ObjectResetter
-using System;
 using System.Collections;
 using UnityEngine;
 
-namespace UnityStandardAssets.Utility
+namespace Utility
 {
 	public class ObjectResetter : MonoBehaviour
 	{
 		private void Start()
 		{
-			this.originalPosition = base.transform.position;
-			this.originalRotation = base.transform.rotation;
-			this.Rigidbody = base.GetComponent<Rigidbody>();
+			originalPosition = transform.position;
+			originalRotation = transform.rotation;
+			Rigidbody = GetComponent<Rigidbody>();
 		}
 
 		public void DelayedReset(float delay)
 		{
-			base.StartCoroutine(this.ResetCoroutine(delay));
+			StartCoroutine(ResetCoroutine(delay));
 		}
 
 		public IEnumerator ResetCoroutine(float delay)
 		{
 			yield return new WaitForSeconds(delay);
-			base.transform.position = this.originalPosition;
-			base.transform.rotation = this.originalRotation;
-			if (this.Rigidbody)
+			transform.position = originalPosition;
+			transform.rotation = originalRotation;
+			if (Rigidbody)
 			{
-				this.Rigidbody.velocity = Vector3.zero;
-				this.Rigidbody.angularVelocity = Vector3.zero;
+				Rigidbody.velocity = Vector3.zero;
+				Rigidbody.angularVelocity = Vector3.zero;
 			}
-			base.SendMessage("Reset");
+			SendMessage("Reset");
 			yield break;
 		}
 

@@ -1,57 +1,75 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.Cameras.AbstractTargetFollower
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.Cameras
+namespace CodeBase._Cameras
 {
 	public abstract class AbstractTargetFollower : MonoBehaviour
 	{
+		[SerializeField]
+		protected Transform m_Target;
+
+		[SerializeField]
+		private bool m_AutoTargetPlayer = true;
+
+		[SerializeField]
+		private UpdateType m_UpdateType;
+
+		protected Rigidbody targetRigidbody;
+		
+		public Transform Target => m_Target;
+
+		public enum UpdateType
+		{
+			FixedUpdate,
+			LateUpdate,
+			ManualUpdate
+		}
+		
 		protected virtual void Start()
 		{
-			if (this.m_AutoTargetPlayer)
+			if (m_AutoTargetPlayer)
 			{
-				this.FindAndTargetPlayer();
+				FindAndTargetPlayer();
 			}
-			if (this.m_Target == null)
+			if (m_Target == null)
 			{
 				return;
 			}
-			this.targetRigidbody = this.m_Target.GetComponent<Rigidbody>();
+			targetRigidbody = m_Target.GetComponent<Rigidbody>();
 		}
 
 		private void FixedUpdate()
 		{
-			if (this.m_AutoTargetPlayer && (this.m_Target == null || !this.m_Target.gameObject.activeSelf))
+			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
 			{
-				this.FindAndTargetPlayer();
+				FindAndTargetPlayer();
 			}
-			if (this.m_UpdateType == AbstractTargetFollower.UpdateType.FixedUpdate)
+			if (m_UpdateType == UpdateType.FixedUpdate)
 			{
-				this.FollowTarget(Time.deltaTime);
+				FollowTarget(Time.deltaTime);
 			}
 		}
 
 		private void LateUpdate()
 		{
-			if (this.m_AutoTargetPlayer && (this.m_Target == null || !this.m_Target.gameObject.activeSelf))
+			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
 			{
-				this.FindAndTargetPlayer();
+				FindAndTargetPlayer();
 			}
-			if (this.m_UpdateType == AbstractTargetFollower.UpdateType.LateUpdate)
+			if (m_UpdateType == UpdateType.LateUpdate)
 			{
-				this.FollowTarget(Time.deltaTime);
+				FollowTarget(Time.deltaTime);
 			}
 		}
 
 		public void ManualUpdate()
 		{
-			if (this.m_AutoTargetPlayer && (this.m_Target == null || !this.m_Target.gameObject.activeSelf))
+			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
 			{
-				this.FindAndTargetPlayer();
+				FindAndTargetPlayer();
 			}
-			if (this.m_UpdateType == AbstractTargetFollower.UpdateType.ManualUpdate)
+			if (m_UpdateType == UpdateType.ManualUpdate)
 			{
-				this.FollowTarget(Time.deltaTime);
+				FollowTarget(Time.deltaTime);
 			}
 		}
 
@@ -62,39 +80,16 @@ namespace UnityStandardAssets.Cameras
 			GameObject gameObject = GameObject.FindGameObjectWithTag("Player");
 			if (gameObject)
 			{
-				this.SetTarget(gameObject.transform);
+				SetTarget(gameObject.transform);
 			}
 		}
 
 		public virtual void SetTarget(Transform newTransform)
 		{
-			this.m_Target = newTransform;
+			m_Target = newTransform;
 		}
 
-		public Transform Target
-		{
-			get
-			{
-				return this.m_Target;
-			}
-		}
 
-		[SerializeField]
-		protected Transform m_Target;
 
-		[SerializeField]
-		private bool m_AutoTargetPlayer = true;
-
-		[SerializeField]
-		private AbstractTargetFollower.UpdateType m_UpdateType;
-
-		protected Rigidbody targetRigidbody;
-
-		public enum UpdateType
-		{
-			FixedUpdate,
-			LateUpdate,
-			ManualUpdate
-		}
 	}
 }

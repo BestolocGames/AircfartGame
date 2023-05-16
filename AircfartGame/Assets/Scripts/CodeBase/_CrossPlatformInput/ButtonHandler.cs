@@ -1,44 +1,35 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.ButtonHandler
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace CodeBase._CrossPlatformInput
 {
 	public class ButtonHandler : MonoBehaviour
 	{
-		private void OnEnable()
-		{
-		}
+		public string Name;
 
 		public void SetDownState()
 		{
-			CrossPlatformInputManager.SetButtonDown(this.Name);
+			CrossPlatformInputManager.SetButtonDown(Name);
 		}
 
 		public void SetUpState()
 		{
-			CrossPlatformInputManager.SetButtonUp(this.Name);
+			CrossPlatformInputManager.SetButtonUp(Name);
 		}
 
 		public void SetAxisPositiveState()
 		{
-			CrossPlatformInputManager.SetAxisPositive(this.Name);
+			CrossPlatformInputManager.SetAxisPositive(Name);
 		}
 
 		public void SetAxisNeutralState()
 		{
-			CrossPlatformInputManager.SetAxisZero(this.Name);
+			CrossPlatformInputManager.SetAxisZero(Name);
 		}
 
 		public void SetAxisNegativeState()
 		{
-			CrossPlatformInputManager.SetAxisNegative(this.Name);
+			CrossPlatformInputManager.SetAxisNegative(Name);
 		}
 
-		public void Update()
-		{
-		}
-
-		public string Name;
 	}
 }

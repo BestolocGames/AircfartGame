@@ -1,33 +1,31 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.Utility.PlatformSpecificContent
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.Utility
+namespace Utility
 {
 	public class PlatformSpecificContent : MonoBehaviour
 	{
 		private void OnEnable()
 		{
-			this.CheckEnableContent();
+			CheckEnableContent();
 		}
 
 		private void CheckEnableContent()
 		{
-			if (this.m_BuildTargetGroup == PlatformSpecificContent.BuildTargetGroup.Mobile)
+			if (m_BuildTargetGroup == BuildTargetGroup.Mobile)
 			{
-				this.EnableContent(true);
+				EnableContent(true);
 			}
 			else
 			{
-				this.EnableContent(false);
+				EnableContent(false);
 			}
 		}
 
 		private void EnableContent(bool enabled)
 		{
-			if (this.m_Content.Length > 0)
+			if (m_Content.Length > 0)
 			{
-				foreach (GameObject gameObject in this.m_Content)
+				foreach (GameObject gameObject in m_Content)
 				{
 					if (gameObject != null)
 					{
@@ -35,17 +33,17 @@ namespace UnityStandardAssets.Utility
 					}
 				}
 			}
-			if (this.m_ChildrenOfThisObject)
+			if (m_ChildrenOfThisObject)
 			{
-				foreach (object obj in base.transform)
+				foreach (object obj in this.transform)
 				{
 					Transform transform = (Transform)obj;
 					transform.gameObject.SetActive(enabled);
 				}
 			}
-			if (this.m_MonoBehaviours.Length > 0)
+			if (m_MonoBehaviours.Length > 0)
 			{
-				foreach (MonoBehaviour monoBehaviour in this.m_MonoBehaviours)
+				foreach (MonoBehaviour monoBehaviour in m_MonoBehaviours)
 				{
 					monoBehaviour.enabled = enabled;
 				}
@@ -53,7 +51,7 @@ namespace UnityStandardAssets.Utility
 		}
 
 		[SerializeField]
-		private PlatformSpecificContent.BuildTargetGroup m_BuildTargetGroup;
+		private BuildTargetGroup m_BuildTargetGroup;
 
 		[SerializeField]
 		private GameObject[] m_Content = new GameObject[0];

@@ -1,14 +1,13 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.PlatformSpecific.StandaloneInput
 using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.CrossPlatformInput.PlatformSpecific
+namespace CodeBase._CrossPlatformInput._PlatformSpecific
 {
 	public class StandaloneInput : VirtualInput
 	{
 		public override float GetAxis(string name, bool raw)
 		{
-			return (!raw) ? UnityEngine.Input.GetAxis(name) : UnityEngine.Input.GetAxisRaw(name);
+			return (!raw) ? Input.GetAxis(name) : Input.GetAxisRaw(name);
 		}
 
 		public override bool GetButton(string name)
@@ -58,7 +57,7 @@ namespace UnityStandardAssets.CrossPlatformInput.PlatformSpecific
 
 		public override Vector3 MousePosition()
 		{
-			return UnityEngine.Input.mousePosition;
+			return Input.mousePosition;
 		}
 	}
 }

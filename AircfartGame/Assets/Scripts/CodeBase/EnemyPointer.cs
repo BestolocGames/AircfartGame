@@ -1,20 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using FlightKit;
+using CodeBase._Main;
 using UnityEngine;
 
-public class EnemyPointer : MonoBehaviour {
+namespace CodeBase
+{
+    public class EnemyPointer : MonoBehaviour {
 
-    [SerializeField] PickupSphere _enemyHealth;
+        [SerializeField] PickupSphere _enemyHealth;
 
-    private void Start() {
-        PointerManager.Instance.AddToList(this);
-        _enemyHealth.OnCollect.AddListener(Destroy);
+        private void Start() {
+            PointerManager.Instance.AddToList(this);
+            _enemyHealth.OnCollect.AddListener(Destroy);
+        }
+
+        private void Destroy() {
+            PointerManager.Instance.RemoveFromList(this);
+        }
+
     }
-
-    private void Destroy() {
-        PointerManager.Instance.RemoveFromList(this);
-    }
-
 }

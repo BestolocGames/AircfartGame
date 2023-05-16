@@ -1,81 +1,11 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.Cameras.AutoCam
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.Cameras
+namespace CodeBase._Cameras
 {
 	[ExecuteInEditMode]
 	public class AutoCam : PivotBasedCameraRig
 	{
-		public float TurnSpeed
-		{
-			get
-			{
-				return this.m_TurnSpeed;
-			}
-			set
-			{
-				this.m_TurnSpeed = value;
-			}
-		}
-
-		protected override void FollowTarget(float deltaTime)
-		{
-			if (deltaTime <= 0f || this.m_Target == null)
-			{
-				return;
-			}
-			Vector3 forward = this.m_Target.forward;
-			Vector3 up = this.m_Target.up;
-			if (this.m_FollowVelocity && Application.isPlaying)
-			{
-				if (this.targetRigidbody.velocity.magnitude > this.m_TargetVelocityLowerLimit)
-				{
-					forward = this.targetRigidbody.velocity.normalized;
-					up = Vector3.up;
-				}
-				else
-				{
-					up = Vector3.up;
-				}
-				this.m_CurrentTurnAmount = Mathf.SmoothDamp(this.m_CurrentTurnAmount, 1f, ref this.m_TurnSpeedVelocityChange, this.m_SmoothTurnTime);
-			}
-			else
-			{
-				float num = Mathf.Atan2(forward.x, forward.z) * 57.29578f;
-				if (this.m_SpinTurnLimit > 0f)
-				{
-					float value = Mathf.Abs(Mathf.DeltaAngle(this.m_LastFlatAngle, num)) / deltaTime;
-					float num2 = Mathf.InverseLerp(this.m_SpinTurnLimit, this.m_SpinTurnLimit * 0.75f, value);
-					float smoothTime = (this.m_CurrentTurnAmount <= num2) ? 1f : 0.1f;
-					if (Application.isPlaying)
-					{
-						this.m_CurrentTurnAmount = Mathf.SmoothDamp(this.m_CurrentTurnAmount, num2, ref this.m_TurnSpeedVelocityChange, smoothTime);
-					}
-					else
-					{
-						this.m_CurrentTurnAmount = num2;
-					}
-				}
-				else
-				{
-					this.m_CurrentTurnAmount = 1f;
-				}
-				this.m_LastFlatAngle = num;
-			}
-			base.transform.position = Vector3.Lerp(base.transform.position, this.m_Target.position, deltaTime * this.m_MoveSpeed);
-			if (!this.m_FollowTilt)
-			{
-				forward.y = 0f;
-				if (forward.sqrMagnitude < 1.401298E-45f)
-				{
-					forward = base.transform.forward;
-				}
-			}
-			Quaternion b = Quaternion.LookRotation(forward, this.m_RollUp);
-			this.m_RollUp = ((this.m_RollSpeed <= 0f) ? Vector3.up : Vector3.Slerp(this.m_RollUp, up, this.m_RollSpeed * deltaTime));
-			base.transform.rotation = Quaternion.Lerp(base.transform.rotation, b, this.m_TurnSpeed * this.m_CurrentTurnAmount * deltaTime);
-		}
+		#region SerializedFields
 
 		[SerializeField]
 		private float m_MoveSpeed = 3f;
@@ -101,6 +31,8 @@ namespace UnityStandardAssets.Cameras
 		[SerializeField]
 		private float m_SmoothTurnTime = 0.2f;
 
+		#endregion
+
 		private float m_LastFlatAngle;
 
 		private float m_CurrentTurnAmount;
@@ -108,5 +40,71 @@ namespace UnityStandardAssets.Cameras
 		private float m_TurnSpeedVelocityChange;
 
 		private Vector3 m_RollUp = Vector3.up;
+		
+		public float TurnSpeed
+		{
+			get => m_TurnSpeed;
+			set => m_TurnSpeed = value;
+		}
+
+		protected override void FollowTarget(float deltaTime)
+		{
+			if (deltaTime <= 0f || m_Target == null)
+			{
+				return;
+			}
+			Vector3 forward = m_Target.forward;
+			Vector3 up = m_Target.up;
+			if (m_FollowVelocity && Application.isPlaying)
+			{
+				if (targetRigidbody.velocity.magnitude > m_TargetVelocityLowerLimit)
+				{
+					forward = targetRigidbody.velocity.normalized;
+					up = Vector3.up;
+				}
+				else
+				{
+					up = Vector3.up;
+				}
+				m_CurrentTurnAmount = Mathf.SmoothDamp(m_CurrentTurnAmount, 1f, ref m_TurnSpeedVelocityChange, m_SmoothTurnTime);
+			}
+			else
+			{
+				float num = Mathf.Atan2(forward.x, forward.z) * 57.29578f;
+				if (m_SpinTurnLimit > 0f)
+				{
+					float value = Mathf.Abs(Mathf.DeltaAngle(m_LastFlatAngle, num)) / deltaTime;
+					float num2 = Mathf.InverseLerp(m_SpinTurnLimit, m_SpinTurnLimit * 0.75f, value);
+					float smoothTime = (m_CurrentTurnAmount <= num2) ? 1f : 0.1f;
+					if (Application.isPlaying)
+					{
+						m_CurrentTurnAmount = Mathf.SmoothDamp(m_CurrentTurnAmount, num2, ref m_TurnSpeedVelocityChange, smoothTime);
+					}
+					else
+					{
+						m_CurrentTurnAmount = num2;
+					}
+				}
+				else
+				{
+					m_CurrentTurnAmount = 1f;
+				}
+				m_LastFlatAngle = num;
+			}
+			transform.position = Vector3.Lerp(transform.position, m_Target.position, deltaTime * m_MoveSpeed);
+			if (!m_FollowTilt)
+			{
+				forward.y = 0f;
+				if (forward.sqrMagnitude < 1.401298E-45f)
+				{
+					forward = transform.forward;
+				}
+			}
+			Quaternion b = Quaternion.LookRotation(forward, m_RollUp);
+			m_RollUp = ((m_RollSpeed <= 0f) ? Vector3.up : Vector3.Slerp(m_RollUp, up, m_RollSpeed * deltaTime));
+			transform.rotation = Quaternion.Lerp(transform.rotation, b, m_TurnSpeed * m_CurrentTurnAmount * deltaTime);
+		}
+
+
 	}
 }

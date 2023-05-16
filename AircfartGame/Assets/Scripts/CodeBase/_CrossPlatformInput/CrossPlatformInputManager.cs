@@ -1,50 +1,49 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager
 using System;
+using CodeBase._CrossPlatformInput._PlatformSpecific;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput.PlatformSpecific;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace CodeBase._CrossPlatformInput
 {
 	public static class CrossPlatformInputManager
 	{
 		static CrossPlatformInputManager()
 		{
-			CrossPlatformInputManager.activeInput = CrossPlatformInputManager.s_TouchInput;
+			activeInput = s_TouchInput;
 		}
 
-		public static void SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod activeInputMethod)
+		public static void SwitchActiveInputMethod(ActiveInputMethod activeInputMethod)
 		{
-			if (activeInputMethod != CrossPlatformInputManager.ActiveInputMethod.Hardware)
+			if (activeInputMethod != ActiveInputMethod.Hardware)
 			{
-				if (activeInputMethod == CrossPlatformInputManager.ActiveInputMethod.Touch)
+				if (activeInputMethod == ActiveInputMethod.Touch)
 				{
-					CrossPlatformInputManager.activeInput = CrossPlatformInputManager.s_TouchInput;
+					activeInput = s_TouchInput;
 				}
 			}
 			else
 			{
-				CrossPlatformInputManager.activeInput = CrossPlatformInputManager.s_HardwareInput;
+				activeInput = s_HardwareInput;
 			}
 		}
 
 		public static bool AxisExists(string name)
 		{
-			return CrossPlatformInputManager.activeInput.AxisExists(name);
+			return activeInput.AxisExists(name);
 		}
 
 		public static bool ButtonExists(string name)
 		{
-			return CrossPlatformInputManager.activeInput.ButtonExists(name);
+			return activeInput.ButtonExists(name);
 		}
 
-		public static void RegisterVirtualAxis(CrossPlatformInputManager.VirtualAxis axis)
+		public static void RegisterVirtualAxis(VirtualAxis axis)
 		{
-			CrossPlatformInputManager.activeInput.RegisterVirtualAxis(axis);
+			activeInput.RegisterVirtualAxis(axis);
 		}
 
-		public static void RegisterVirtualButton(CrossPlatformInputManager.VirtualButton button)
+		public static void RegisterVirtualButton(VirtualButton button)
 		{
-			CrossPlatformInputManager.activeInput.RegisterVirtualButton(button);
+			activeInput.RegisterVirtualButton(button);
 		}
 
 		public static void UnRegisterVirtualAxis(string name)
@@ -53,100 +52,100 @@ namespace UnityStandardAssets.CrossPlatformInput
 			{
 				throw new ArgumentNullException("name");
 			}
-			CrossPlatformInputManager.activeInput.UnRegisterVirtualAxis(name);
+			activeInput.UnRegisterVirtualAxis(name);
 		}
 
 		public static void UnRegisterVirtualButton(string name)
 		{
-			CrossPlatformInputManager.activeInput.UnRegisterVirtualButton(name);
+			activeInput.UnRegisterVirtualButton(name);
 		}
 
-		public static CrossPlatformInputManager.VirtualAxis VirtualAxisReference(string name)
+		public static VirtualAxis VirtualAxisReference(string name)
 		{
-			return CrossPlatformInputManager.activeInput.VirtualAxisReference(name);
+			return activeInput.VirtualAxisReference(name);
 		}
 
 		public static float GetAxis(string name)
 		{
-			return CrossPlatformInputManager.GetAxis(name, false);
+			return GetAxis(name, false);
 		}
 
 		public static float GetAxisRaw(string name)
 		{
-			return CrossPlatformInputManager.GetAxis(name, true);
+			return GetAxis(name, true);
 		}
 
 		private static float GetAxis(string name, bool raw)
 		{
-			return CrossPlatformInputManager.activeInput.GetAxis(name, raw);
+			return activeInput.GetAxis(name, raw);
 		}
 
 		public static bool GetButton(string name)
 		{
-			return CrossPlatformInputManager.activeInput.GetButton(name);
+			return activeInput.GetButton(name);
 		}
 
 		public static bool GetButtonDown(string name)
 		{
-			return CrossPlatformInputManager.activeInput.GetButtonDown(name);
+			return activeInput.GetButtonDown(name);
 		}
 
 		public static bool GetButtonUp(string name)
 		{
-			return CrossPlatformInputManager.activeInput.GetButtonUp(name);
+			return activeInput.GetButtonUp(name);
 		}
 
 		public static void SetButtonDown(string name)
 		{
-			CrossPlatformInputManager.activeInput.SetButtonDown(name);
+			activeInput.SetButtonDown(name);
 		}
 
 		public static void SetButtonUp(string name)
 		{
-			CrossPlatformInputManager.activeInput.SetButtonUp(name);
+			activeInput.SetButtonUp(name);
 		}
 
 		public static void SetAxisPositive(string name)
 		{
-			CrossPlatformInputManager.activeInput.SetAxisPositive(name);
+			activeInput.SetAxisPositive(name);
 		}
 
 		public static void SetAxisNegative(string name)
 		{
-			CrossPlatformInputManager.activeInput.SetAxisNegative(name);
+			activeInput.SetAxisNegative(name);
 		}
 
 		public static void SetAxisZero(string name)
 		{
-			CrossPlatformInputManager.activeInput.SetAxisZero(name);
+			activeInput.SetAxisZero(name);
 		}
 
 		public static void SetAxis(string name, float value)
 		{
-			CrossPlatformInputManager.activeInput.SetAxis(name, value);
+			activeInput.SetAxis(name, value);
 		}
 
 		public static Vector3 mousePosition
 		{
 			get
 			{
-				return CrossPlatformInputManager.activeInput.MousePosition();
+				return activeInput.MousePosition();
 			}
 		}
 
 		public static void SetVirtualMousePositionX(float f)
 		{
-			CrossPlatformInputManager.activeInput.SetVirtualMousePositionX(f);
+			activeInput.SetVirtualMousePositionX(f);
 		}
 
 		public static void SetVirtualMousePositionY(float f)
 		{
-			CrossPlatformInputManager.activeInput.SetVirtualMousePositionY(f);
+			activeInput.SetVirtualMousePositionY(f);
 		}
 
 		public static void SetVirtualMousePositionZ(float f)
 		{
-			CrossPlatformInputManager.activeInput.SetVirtualMousePositionZ(f);
+			activeInput.SetVirtualMousePositionZ(f);
 		}
 
 		private static VirtualInput activeInput;
@@ -170,7 +169,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			public VirtualAxis(string name, bool matchToInputSettings)
 			{
 				this.name = name;
-				this.matchWithInputManager = matchToInputSettings;
+				matchWithInputManager = matchToInputSettings;
 			}
 
 			public string name { get; private set; }
@@ -179,19 +178,19 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 			public void Remove()
 			{
-				CrossPlatformInputManager.UnRegisterVirtualAxis(this.name);
+				UnRegisterVirtualAxis(name);
 			}
 
 			public void Update(float value)
 			{
-				this.m_Value = value;
+				m_Value = value;
 			}
 
 			public float GetValue
 			{
 				get
 				{
-					return this.m_Value;
+					return m_Value;
 				}
 			}
 
@@ -199,7 +198,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			{
 				get
 				{
-					return this.m_Value;
+					return m_Value;
 				}
 			}
 
@@ -215,7 +214,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			public VirtualButton(string name, bool matchToInputSettings)
 			{
 				this.name = name;
-				this.matchWithInputManager = matchToInputSettings;
+				matchWithInputManager = matchToInputSettings;
 			}
 
 			public string name { get; private set; }
@@ -224,30 +223,30 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 			public void Pressed()
 			{
-				if (this.m_Pressed)
+				if (m_Pressed)
 				{
 					return;
 				}
-				this.m_Pressed = true;
-				this.m_LastPressedFrame = Time.frameCount;
+				m_Pressed = true;
+				m_LastPressedFrame = Time.frameCount;
 			}
 
 			public void Released()
 			{
-				this.m_Pressed = false;
-				this.m_ReleasedFrame = Time.frameCount;
+				m_Pressed = false;
+				m_ReleasedFrame = Time.frameCount;
 			}
 
 			public void Remove()
 			{
-				CrossPlatformInputManager.UnRegisterVirtualButton(this.name);
+				UnRegisterVirtualButton(name);
 			}
 
 			public bool GetButton
 			{
 				get
 				{
-					return this.m_Pressed;
+					return m_Pressed;
 				}
 			}
 
@@ -255,7 +254,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			{
 				get
 				{
-					return this.m_LastPressedFrame - Time.frameCount == -1;
+					return m_LastPressedFrame - Time.frameCount == -1;
 				}
 			}
 
@@ -263,7 +262,7 @@ namespace UnityStandardAssets.CrossPlatformInput
 			{
 				get
 				{
-					return this.m_ReleasedFrame == Time.frameCount - 1;
+					return m_ReleasedFrame == Time.frameCount - 1;
 				}
 			}
 

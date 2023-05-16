@@ -1,19 +1,23 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.ImageEffects.PostEffectsBase
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace CodeBase._ImageEffects
 {
 	[RequireComponent(typeof(Camera))]
 	[ExecuteInEditMode]
 	public class PostEffectsBase : MonoBehaviour
 	{
+		protected bool supportHDRTextures = true;
+
+		protected bool supportDX11;
+
+		protected bool isSupported = true;
+		
 		protected Material CheckShaderAndCreateMaterial(Shader s, Material m2Create)
 		{
 			if (!s)
 			{
-				UnityEngine.Debug.Log("Missing shader in " + this.ToString());
-				base.enabled = false;
+				Debug.Log("Missing shader in " + ToString());
+				enabled = false;
 				return null;
 			}
 			if (s.isSupported && m2Create && m2Create.shader == s)
@@ -22,13 +26,13 @@ namespace UnityStandardAssets.ImageEffects
 			}
 			if (!s.isSupported)
 			{
-				this.NotSupported();
-				UnityEngine.Debug.Log(string.Concat(new string[]
+				NotSupported();
+				Debug.Log(string.Concat(new string[]
 				{
 					"The shader ",
 					s.ToString(),
 					" on effect ",
-					this.ToString(),
+					ToString(),
 					" is not supported on this platform!"
 				}));
 				return null;
@@ -46,7 +50,7 @@ namespace UnityStandardAssets.ImageEffects
 		{
 			if (!s)
 			{
-				UnityEngine.Debug.Log("Missing shader in " + this.ToString());
+				Debug.Log("Missing shader in " + ToString());
 				return null;
 			}
 			if (m2Create && m2Create.shader == s && s.isSupported)
@@ -68,56 +72,56 @@ namespace UnityStandardAssets.ImageEffects
 
 		private void OnEnable()
 		{
-			this.isSupported = true;
+			isSupported = true;
 		}
 
 		protected bool CheckSupport()
 		{
-			return this.CheckSupport(false);
+			return CheckSupport(false);
 		}
 
 		public virtual bool CheckResources()
 		{
-			UnityEngine.Debug.LogWarning("CheckResources () for " + this.ToString() + " should be overwritten.");
-			return this.isSupported;
+			Debug.LogWarning("CheckResources () for " + ToString() + " should be overwritten.");
+			return isSupported;
 		}
 
 		protected void Start()
 		{
-			this.CheckResources();
+			CheckResources();
 		}
 
 		protected bool CheckSupport(bool needDepth)
 		{
-			this.isSupported = true;
-			this.supportHDRTextures = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf);
-			this.supportDX11 = (SystemInfo.graphicsShaderLevel >= 50 && SystemInfo.supportsComputeShaders);
+			isSupported = true;
+			supportHDRTextures = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf);
+			supportDX11 = (SystemInfo.graphicsShaderLevel >= 50 && SystemInfo.supportsComputeShaders);
 			if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
 			{
-				this.NotSupported();
+				NotSupported();
 				return false;
 			}
 			if (needDepth && !SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Depth))
 			{
-				this.NotSupported();
+				NotSupported();
 				return false;
 			}
 			if (needDepth)
 			{
-				base.GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
+				GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
 			}
 			return true;
 		}
 
 		protected bool CheckSupport(bool needDepth, bool needHdr)
 		{
-			if (!this.CheckSupport(needDepth))
+			if (!CheckSupport(needDepth))
 			{
 				return false;
 			}
-			if (needHdr && !this.supportHDRTextures)
+			if (needHdr && !supportHDRTextures)
 			{
-				this.NotSupported();
+				NotSupported();
 				return false;
 			}
 			return true;
@@ -125,27 +129,27 @@ namespace UnityStandardAssets.ImageEffects
 
 		public bool Dx11Support()
 		{
-			return this.supportDX11;
+			return supportDX11;
 		}
 
 		protected void ReportAutoDisable()
 		{
-			UnityEngine.Debug.LogWarning("The image effect " + this.ToString() + " has been disabled as it's not supported on the current platform.");
+			Debug.LogWarning("The image effect " + ToString() + " has been disabled as it's not supported on the current platform.");
 		}
 
 		private bool CheckShader(Shader s)
 		{
-			UnityEngine.Debug.Log(string.Concat(new string[]
+			Debug.Log(string.Concat(new string[]
 			{
 				"The shader ",
 				s.ToString(),
 				" on effect ",
-				this.ToString(),
+				ToString(),
 				" is not part of the Unity 3.2+ effects suite anymore. For best performance and quality, please ensure you are using the latest Standard Assets Image Effects (Pro only) package."
 			}));
 			if (!s.isSupported)
 			{
-				this.NotSupported();
+				NotSupported();
 				return false;
 			}
 			return false;
@@ -153,8 +157,8 @@ namespace UnityStandardAssets.ImageEffects
 
 		protected void NotSupported()
 		{
-			base.enabled = false;
-			this.isSupported = false;
+			enabled = false;
+			isSupported = false;
 		}
 
 		protected void DrawBorder(RenderTexture dest, Material material)
@@ -232,10 +236,6 @@ namespace UnityStandardAssets.ImageEffects
 			GL.PopMatrix();
 		}
 
-		protected bool supportHDRTextures = true;
 
-		protected bool supportDX11;
-
-		protected bool isSupported = true;
 	}
 }

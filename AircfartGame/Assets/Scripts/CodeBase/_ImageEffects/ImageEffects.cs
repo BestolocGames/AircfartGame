@@ -1,8 +1,7 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.ImageEffects.ImageEffects
 using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace CodeBase._ImageEffects
 {
 	[AddComponentMenu("")]
 	public class ImageEffects

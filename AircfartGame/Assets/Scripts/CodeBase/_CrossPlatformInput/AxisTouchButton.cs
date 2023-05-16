@@ -1,60 +1,10 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.AxisTouchButton
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace CodeBase._CrossPlatformInput
 {
 	public class AxisTouchButton : MonoBehaviour, IPointerDownHandler, IEventSystemHandler, IPointerUpHandler
 	{
-		private void OnEnable()
-		{
-			if (!CrossPlatformInputManager.AxisExists(this.axisName))
-			{
-				this.m_Axis = new CrossPlatformInputManager.VirtualAxis(this.axisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(this.m_Axis);
-			}
-			else
-			{
-				this.m_Axis = CrossPlatformInputManager.VirtualAxisReference(this.axisName);
-			}
-			this.FindPairedButton();
-		}
-
-		private void FindPairedButton()
-		{
-			AxisTouchButton[] array = UnityEngine.Object.FindObjectsOfType(typeof(AxisTouchButton)) as AxisTouchButton[];
-			if (array != null)
-			{
-				for (int i = 0; i < array.Length; i++)
-				{
-					if (array[i].axisName == this.axisName && array[i] != this)
-					{
-						this.m_PairedWith = array[i];
-					}
-				}
-			}
-		}
-
-		private void OnDisable()
-		{
-			this.m_Axis.Remove();
-		}
-
-		public void OnPointerDown(PointerEventData data)
-		{
-			if (this.m_PairedWith == null)
-			{
-				this.FindPairedButton();
-			}
-			this.m_Axis.Update(Mathf.MoveTowards(this.m_Axis.GetValue, this.axisValue, this.responseSpeed * Time.deltaTime));
-		}
-
-		public void OnPointerUp(PointerEventData data)
-		{
-			this.m_Axis.Update(Mathf.MoveTowards(this.m_Axis.GetValue, 0f, this.responseSpeed * Time.deltaTime));
-		}
-
 		public string axisName = "Horizontal";
 
 		public float axisValue = 1f;
@@ -63,8 +13,57 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 		public float returnToCentreSpeed = 3f;
 
-		private AxisTouchButton m_PairedWith;
+		private AxisTouchButton _pairedWith;
 
-		private CrossPlatformInputManager.VirtualAxis m_Axis;
+		private CrossPlatformInputManager.VirtualAxis _axis;
+		
+		
+		private void OnEnable()
+		{
+			if (!CrossPlatformInputManager.AxisExists(axisName))
+			{
+				_axis = new CrossPlatformInputManager.VirtualAxis(axisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_axis);
+			}
+			else
+			{
+				_axis = CrossPlatformInputManager.VirtualAxisReference(axisName);
+			}
+			FindPairedButton();
+		}
+
+		private void FindPairedButton()
+		{
+			AxisTouchButton[] array = FindObjectsOfType(typeof(AxisTouchButton)) as AxisTouchButton[];
+			if (array != null)
+			{
+				for (int i = 0; i < array.Length; i++)
+				{
+					if (array[i].axisName == axisName && array[i] != this)
+					{
+						_pairedWith = array[i];
+					}
+				}
+			}
+		}
+
+		private void OnDisable()
+		{
+			_axis.Remove();
+		}
+
+		public void OnPointerDown(PointerEventData data)
+		{
+			if (_pairedWith == null)
+			{
+				FindPairedButton();
+			}
+			_axis.Update(Mathf.MoveTowards(_axis.GetValue, axisValue, responseSpeed * Time.deltaTime));
+		}
+
+		public void OnPointerUp(PointerEventData data)
+		{
+			_axis.Update(Mathf.MoveTowards(_axis.GetValue, 0f, responseSpeed * Time.deltaTime));
+		}
 	}
 }

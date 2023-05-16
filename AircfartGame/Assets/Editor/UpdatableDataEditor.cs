@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Data;
 using UnityEditor;
 
 [CustomEditor (typeof(UpdatableData), true)]

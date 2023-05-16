@@ -1,8 +1,6 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.ImageEffects.ImageEffectBase
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.ImageEffects
+namespace CodeBase._ImageEffects
 {
 	[RequireComponent(typeof(Camera))]
 	[AddComponentMenu("")]
@@ -12,12 +10,12 @@ namespace UnityStandardAssets.ImageEffects
 		{
 			if (!SystemInfo.supportsImageEffects)
 			{
-				base.enabled = false;
+				enabled = false;
 				return;
 			}
-			if (!this.shader || !this.shader.isSupported)
+			if (!shader || !shader.isSupported)
 			{
-				base.enabled = false;
+				enabled = false;
 			}
 		}
 
@@ -25,20 +23,20 @@ namespace UnityStandardAssets.ImageEffects
 		{
 			get
 			{
-				if (this.m_Material == null)
+				if (m_Material == null)
 				{
-					this.m_Material = new Material(this.shader);
-					this.m_Material.hideFlags = HideFlags.HideAndDontSave;
+					m_Material = new Material(shader);
+					m_Material.hideFlags = HideFlags.HideAndDontSave;
 				}
-				return this.m_Material;
+				return m_Material;
 			}
 		}
 
 		protected virtual void OnDisable()
 		{
-			if (this.m_Material)
+			if (m_Material)
 			{
-				UnityEngine.Object.DestroyImmediate(this.m_Material);
+				DestroyImmediate(m_Material);
 			}
 		}
 

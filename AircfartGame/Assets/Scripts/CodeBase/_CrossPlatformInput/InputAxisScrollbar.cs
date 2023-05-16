@@ -1,20 +1,15 @@
-// dnSpy decompiler from Assembly-CSharp.dll class: UnityStandardAssets.CrossPlatformInput.InputAxisScrollbar
-using System;
 using UnityEngine;
 
-namespace UnityStandardAssets.CrossPlatformInput
+namespace CodeBase._CrossPlatformInput
 {
 	public class InputAxisScrollbar : MonoBehaviour
-	{
-		private void Update()
-		{
-		}
+	{		
+		public string axis;
 
 		public void HandleInput(float value)
 		{
-			CrossPlatformInputManager.SetAxis(this.axis, value * 2f - 1f);
+			CrossPlatformInputManager.SetAxis(axis, value * 2f - 1f);
 		}
 
-		public string axis;
 	}
 }
