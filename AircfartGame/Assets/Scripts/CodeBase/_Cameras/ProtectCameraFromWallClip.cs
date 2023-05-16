@@ -1,61 +1,66 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Cameras
 {
 	public class ProtectCameraFromWallClip : MonoBehaviour
 	{
-		public float clipMoveTime = 0.05f;
+		#region SerializedFiels
 
-		public float returnTime = 0.4f;
+		[SerializeField] private float _clipMoveTime = 0.05f;
 
-		public float sphereCastRadius = 0.1f;
-
-		public bool visualiseInEditor;
-
-		public float closestDistance = 0.5f;
-
-		public string dontClipTag = "Player";
-
-		private Transform m_Cam;
-
-		private Transform m_Pivot;
-
-		private float m_OriginalDist;
-
-		private float m_MoveVelocity;
-
-		private float m_CurrentDist;
-
-		private Ray m_Ray;
-
-		private RaycastHit[] m_Hits;
-
-		private RayHitComparer m_RayHitComparer;
+		[SerializeField]private float _returnTime = 0.4f;
 		
-		public bool protecting { get; private set; }
+		[SerializeField]private float _sphereCastRadius = 0.1f;
+
+		[SerializeField]private bool _visualiseInEditor;
+
+		[SerializeField] private float _closestDistance = 0.5f;
+
+		[SerializeField] private string _dontClipTag = "Player";
+
+		#endregion
+		
+		private Transform _caneraTransform;
+
+		private Transform _pivot;
+
+		private float _originalDistance;
+
+		private float _moveVelocity;
+
+		private float _currentDistance;
+
+		private Ray _ray;
+
+		private RaycastHit[] _hits;
+
+		private RayHitComparer _rayHitComparer;
+		
+		public bool Protecting { get; private set; }
 
 		private void Start()
 		{
-			m_Cam = GetComponentInChildren<Camera>().transform;
-			m_Pivot = m_Cam.parent;
-			m_OriginalDist = m_Cam.localPosition.magnitude;
-			m_CurrentDist = m_OriginalDist;
-			m_RayHitComparer = new RayHitComparer();
+			_caneraTransform = GetComponentInChildren<Camera>().transform;
+			_pivot = _caneraTransform.parent;
+			_originalDistance = _caneraTransform.localPosition.magnitude;
+			_currentDistance = _originalDistance;
+			_rayHitComparer = new RayHitComparer();
 		}
 
 		private void LateUpdate()
 		{
-			float num = m_OriginalDist;
-			m_Ray.origin = m_Pivot.position + m_Pivot.forward * sphereCastRadius;
-			m_Ray.direction = -m_Pivot.forward;
-			Collider[] array = Physics.OverlapSphere(m_Ray.origin, sphereCastRadius);
+			float num = _originalDistance;
+			_ray.origin = _pivot.position + _pivot.forward * _sphereCastRadius;
+			_ray.direction = -_pivot.forward;
+			Collider[] array = Physics.OverlapSphere(_ray.origin, _sphereCastRadius);
 			bool flag = false;
 			bool flag2 = false;
 			for (int i = 0; i < array.Length; i++)
 			{
-				if (!array[i].isTrigger && (!(array[i].attachedRigidbody != null) || !array[i].attachedRigidbody.CompareTag(dontClipTag)))
+				if (!array[i].isTrigger && (!(array[i].attachedRigidbody != null) || !array[i].attachedRigidbody.CompareTag(_dontClipTag)))
 				{
 					flag = true;
 					break;
@@ -63,42 +68,38 @@ namespace CodeBase._Cameras
 			}
 			if (flag)
 			{
-				m_Ray.origin = m_Ray.origin + m_Pivot.forward * sphereCastRadius;
-				m_Hits = Physics.RaycastAll(m_Ray, m_OriginalDist - sphereCastRadius);
+				_ray.origin = _ray.origin + _pivot.forward * _sphereCastRadius;
+				_hits = Physics.RaycastAll(_ray, _originalDistance - _sphereCastRadius);
 			}
 			else
-			{
-				m_Hits = Physics.SphereCastAll(m_Ray, sphereCastRadius, m_OriginalDist + sphereCastRadius);
-			}
-			Array.Sort(m_Hits, m_RayHitComparer);
+				_hits = Physics.SphereCastAll(_ray, _sphereCastRadius, _originalDistance + _sphereCastRadius);
+
+			Array.Sort(_hits, _rayHitComparer);
 			float num2 = float.PositiveInfinity;
-			for (int j = 0; j < m_Hits.Length; j++)
+			for (int j = 0; j < _hits.Length; j++)
 			{
-				if (m_Hits[j].distance < num2 && !m_Hits[j].collider.isTrigger && (!(m_Hits[j].collider.attachedRigidbody != null) || !m_Hits[j].collider.attachedRigidbody.CompareTag(dontClipTag)))
+				if (_hits[j].distance < num2 && !_hits[j].collider.isTrigger && (!(_hits[j].collider.attachedRigidbody != null) || !_hits[j].collider.attachedRigidbody.CompareTag(_dontClipTag)))
 				{
-					num2 = m_Hits[j].distance;
-					num = -m_Pivot.InverseTransformPoint(m_Hits[j].point).z;
+					num2 = _hits[j].distance;
+					num = -_pivot.InverseTransformPoint(_hits[j].point).z;
 					flag2 = true;
 				}
 			}
-			if (flag2)
-			{
-				Debug.DrawRay(m_Ray.origin, -m_Pivot.forward * (num + sphereCastRadius), Color.red);
-			}
-			protecting = flag2;
-			m_CurrentDist = Mathf.SmoothDamp(m_CurrentDist, num, ref m_MoveVelocity, (m_CurrentDist <= num) ? returnTime : clipMoveTime);
-			m_CurrentDist = Mathf.Clamp(m_CurrentDist, closestDistance, m_OriginalDist);
-			m_Cam.localPosition = -Vector3.forward * m_CurrentDist;
+			if (flag2) 
+				Debug.DrawRay(_ray.origin, -_pivot.forward * (num + _sphereCastRadius), Color.red);
+			Protecting = flag2;
+			
+			_currentDistance = Mathf.SmoothDamp(_currentDistance, num, ref _moveVelocity, (_currentDistance <= num) ? _returnTime : _clipMoveTime);
+			_currentDistance = Mathf.Clamp(_currentDistance, _closestDistance, _originalDistance);
+			_caneraTransform.localPosition = -Vector3.forward * _currentDistance;
 		}
 
 
 
 		public class RayHitComparer : IComparer
 		{
-			public int Compare(object x, object y)
-			{
-				return ((RaycastHit)x).distance.CompareTo(((RaycastHit)y).distance);
-			}
+			public int Compare(object x, object y) => 
+				((RaycastHit)x).distance.CompareTo(((RaycastHit)y).distance);
 		}
 	}
 }

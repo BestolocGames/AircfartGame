@@ -1,17 +1,18 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	public class AxisTouchButton : MonoBehaviour, IPointerDownHandler, IEventSystemHandler, IPointerUpHandler
 	{
-		public string axisName = "Horizontal";
+		[FormerlySerializedAs("axisName")] public string _axisName = "Horizontal";
 
-		public float axisValue = 1f;
+		[FormerlySerializedAs("axisValue")] public float _axisValue = 1f;
 
-		public float responseSpeed = 3f;
+		[FormerlySerializedAs("responseSpeed")] public float _responseSpeed = 3f;
 
-		public float returnToCentreSpeed = 3f;
+		[FormerlySerializedAs("returnToCentreSpeed")] public float _returnToCentreSpeed = 3f;
 
 		private AxisTouchButton _pairedWith;
 
@@ -20,14 +21,14 @@ namespace CodeBase._CrossPlatformInput
 		
 		private void OnEnable()
 		{
-			if (!CrossPlatformInputManager.AxisExists(axisName))
+			if (!CrossPlatformInputManager.AxisExists(_axisName))
 			{
-				_axis = new CrossPlatformInputManager.VirtualAxis(axisName);
+				_axis = new CrossPlatformInputManager.VirtualAxis(_axisName);
 				CrossPlatformInputManager.RegisterVirtualAxis(_axis);
 			}
 			else
 			{
-				_axis = CrossPlatformInputManager.VirtualAxisReference(axisName);
+				_axis = CrossPlatformInputManager.VirtualAxisReference(_axisName);
 			}
 			FindPairedButton();
 		}
@@ -39,7 +40,7 @@ namespace CodeBase._CrossPlatformInput
 			{
 				for (int i = 0; i < array.Length; i++)
 				{
-					if (array[i].axisName == axisName && array[i] != this)
+					if (array[i]._axisName == _axisName && array[i] != this)
 					{
 						_pairedWith = array[i];
 					}
@@ -58,12 +59,12 @@ namespace CodeBase._CrossPlatformInput
 			{
 				FindPairedButton();
 			}
-			_axis.Update(Mathf.MoveTowards(_axis.GetValue, axisValue, responseSpeed * Time.deltaTime));
+			_axis.Update(Mathf.MoveTowards(_axis.GetValue, _axisValue, _responseSpeed * Time.deltaTime));
 		}
 
 		public void OnPointerUp(PointerEventData data)
 		{
-			_axis.Update(Mathf.MoveTowards(_axis.GetValue, 0f, responseSpeed * Time.deltaTime));
+			_axis.Update(Mathf.MoveTowards(_axis.GetValue, 0f, _responseSpeed * Time.deltaTime));
 		}
 	}
 }

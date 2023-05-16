@@ -9,12 +9,10 @@ namespace CodeBase
 
         private void Start() {
             PointerManager.Instance.AddToList(this);
-            _enemyHealth.OnCollect.AddListener(Destroy);
+            _enemyHealth._collect.AddListener(Destroy);
         }
 
-        private void Destroy() {
+        private void Destroy() => 
             PointerManager.Instance.RemoveFromList(this);
-        }
-
     }
 }

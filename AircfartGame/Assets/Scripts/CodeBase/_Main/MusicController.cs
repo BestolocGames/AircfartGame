@@ -1,6 +1,7 @@
 using System.Collections;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -8,19 +9,19 @@ namespace CodeBase._Main
 	{
 		private void Awake()
 		{
-			if (menu != null && enabled)
+			if (_menu != null && enabled)
 			{
-				_initMenuVolume = menu.volume;
-				if (playOnStart)
+				_initMenuVolume = _menu.volume;
+				if (_playOnStart)
 				{
-					menu.Play();
+					_menu.Play();
 				}
 			}
 		}
 
 		private void OnEnable()
 		{
-			if (changeMusicOnTakeOff)
+			if (_changeMusicOnTakeOff)
 			{
 				UIEventsPublisher.OnPlayEvent += OnPlayClicked;
 				TakeOffPublisher.OnTakeOffEvent += StartGameplay;
@@ -39,25 +40,25 @@ namespace CodeBase._Main
 
 		public virtual void Pause()
 		{
-			if (menu && menu.isPlaying)
+			if (_menu && _menu.isPlaying)
 			{
-				menu.Pause();
+				_menu.Pause();
 			}
-			if (gameplay && gameplay.isPlaying)
+			if (_gameplay && _gameplay.isPlaying)
 			{
-				gameplay.Pause();
+				_gameplay.Pause();
 			}
 		}
 
 		public virtual void UnPause()
 		{
-			if (menu && !menu.isPlaying)
+			if (_menu && !_menu.isPlaying)
 			{
-				menu.UnPause();
+				_menu.UnPause();
 			}
-			if (gameplay && !gameplay.isPlaying)
+			if (_gameplay && !_gameplay.isPlaying)
 			{
-				gameplay.UnPause();
+				_gameplay.UnPause();
 			}
 		}
 
@@ -73,29 +74,29 @@ namespace CodeBase._Main
 			float tweenOutProgress = 1f;
 			while (tweenOutProgress > 0.01f)
 			{
-				tweenOutProgress = Mathf.SmoothStep(1f, 0f, (Time.realtimeSinceStartup - tweenStartTime) * 0.1f * menuMusicFadeOutSpeed);
-				menu.volume = _initMenuVolume * tweenOutProgress;
+				tweenOutProgress = Mathf.SmoothStep(1f, 0f, (Time.realtimeSinceStartup - tweenStartTime) * 0.1f * _menuMusicFadeOutSpeed);
+				_menu.volume = _initMenuVolume * tweenOutProgress;
 				yield return wait;
 			}
-			menu.Stop();
-			menu.volume = _initMenuVolume;
+			_menu.Stop();
+			_menu.volume = _initMenuVolume;
 			yield break;
 		}
 
 		private IEnumerator FadeOutGameplay()
 		{
-			float initVolume = gameplay.volume;
+			float initVolume = _gameplay.volume;
 			float tweenStartTime = Time.realtimeSinceStartup;
 			WaitForEndOfFrame wait = new WaitForEndOfFrame();
 			float tweenOutProgress = 1f;
 			while (tweenOutProgress > 0.01f)
 			{
 				tweenOutProgress = Mathf.SmoothStep(1f, 0f, (Time.realtimeSinceStartup - tweenStartTime) * 0.5f);
-				gameplay.volume = initVolume * tweenOutProgress;
+				_gameplay.volume = initVolume * tweenOutProgress;
 				yield return wait;
 			}
-			gameplay.Pause();
-			gameplay.volume = initVolume;
+			_gameplay.Pause();
+			_gameplay.volume = initVolume;
 			yield break;
 		}
 
@@ -106,15 +107,15 @@ namespace CodeBase._Main
 
 		private void StartGameplayCore()
 		{
-			if (gameplay && !gameplay.isPlaying)
+			if (_gameplay && !_gameplay.isPlaying)
 			{
-				gameplay.Play();
+				_gameplay.Play();
 			}
 		}
 
 		private void HandleReviveRequest()
 		{
-			if (gameplay != null)
+			if (_gameplay != null)
 			{
 				StartCoroutine(FadeOutGameplay());
 			}
@@ -122,22 +123,22 @@ namespace CodeBase._Main
 
 		private void HandleRevive()
 		{
-			if (gameplay != null)
+			if (_gameplay != null)
 			{
 				StopAllCoroutines();
 				StartGameplayCore();
 			}
 		}
 
-		public AudioSource menu;
+		[FormerlySerializedAs("menu")] public AudioSource _menu;
 
-		public AudioSource gameplay;
+		[FormerlySerializedAs("gameplay")] public AudioSource _gameplay;
 
-		public bool playOnStart = true;
+		[FormerlySerializedAs("playOnStart")] public bool _playOnStart = true;
 
-		public bool changeMusicOnTakeOff = true;
+		[FormerlySerializedAs("changeMusicOnTakeOff")] public bool _changeMusicOnTakeOff = true;
 
-		public float menuMusicFadeOutSpeed = 1f;
+		[FormerlySerializedAs("menuMusicFadeOutSpeed")] public float _menuMusicFadeOutSpeed = 1f;
 
 		private float _initMenuVolume;
 	}

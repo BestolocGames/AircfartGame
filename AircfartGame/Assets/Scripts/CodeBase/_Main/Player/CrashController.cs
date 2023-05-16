@@ -1,20 +1,21 @@
 using System.Collections;
 using CodeBase._ImageEffects;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utility;
 
 namespace CodeBase._Main.Player
 {
 	public class CrashController : MonoBehaviour
 	{
-		public float crashImpulse = 10f;
+		[FormerlySerializedAs("crashImpulse")] public float _crashImpulse = 10f;
 
-		public float soundImpulse = 5f;
+		[FormerlySerializedAs("soundImpulse")] public float _soundImpulse = 5f;
 
-		[Space]
-		public AudioClip crash;
+		[FormerlySerializedAs("crash")] [Space]
+		public AudioClip _crash;
 
-		public AudioClip hit;
+		[FormerlySerializedAs("hit")] public AudioClip _hit;
 
 		private AudioSource _soundSource;
 		
@@ -24,9 +25,9 @@ namespace CodeBase._Main.Player
 		public void OnCollisionEnter(Collision collision)
 		{
 			float magnitude = collision.impulse.magnitude;
-			if (!collision.gameObject.CompareTag(Tags.TakeOffPlatform) && magnitude > soundImpulse) 
+			if (!collision.gameObject.CompareTag(Tags.TakeOffPlatform) && magnitude > _soundImpulse) 
 				RegisterHit();
-			if (magnitude > crashImpulse) 
+			if (magnitude > _crashImpulse) 
 				RegisterCrash();
 		}
 
@@ -34,7 +35,7 @@ namespace CodeBase._Main.Player
 		{
 			if (_soundSource != null && _soundSource.isActiveAndEnabled)
 			{
-				_soundSource.PlayOneShot(crash);
+				_soundSource.PlayOneShot(_crash);
 			}
 			StartCoroutine(CollisionCameraAnimation());
 		}
@@ -43,7 +44,7 @@ namespace CodeBase._Main.Player
 		{
 			if (_soundSource != null)
 			{
-				_soundSource.PlayOneShot(hit);
+				_soundSource.PlayOneShot(_hit);
 			}
 			AirplaneTrails component = GetComponent<AirplaneTrails>();
 			component.DeactivateTrails();

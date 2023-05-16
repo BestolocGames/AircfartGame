@@ -3,15 +3,8 @@
 namespace UI
 {
 	public class HideOnPlay : MonoBehaviour {
-
-		// Use this for initialization
-		void Start () {
+		private void Start () {
 			gameObject.SetActive (false);
-		}
-	
-		// Update is called once per frame
-		void Update () {
-	
 		}
 	}
 }

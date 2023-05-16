@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._ImageEffects
 {
@@ -7,25 +8,25 @@ namespace CodeBase._ImageEffects
 	[ExecuteInEditMode]
 	public class BloomOptimized : PostEffectsBase
 	{
-		[Range(0f, 1.5f)]
-		public float threshold = 0.25f;
+		[FormerlySerializedAs("threshold")] [Range(0f, 1.5f)]
+		public float _threshold = 0.25f;
 
-		[Range(0f, 2.5f)]
-		public float intensity = 0.75f;
+		[FormerlySerializedAs("intensity")] [Range(0f, 2.5f)]
+		public float _intensity = 0.75f;
 
-		[Range(0.25f, 5.5f)]
-		public float blurSize = 1f;
+		[FormerlySerializedAs("blurSize")] [Range(0.25f, 5.5f)]
+		public float _blurSize = 1f;
 
-		private Resolution resolution;
+		private Resolution _resolution;
 
-		[Range(1f, 4f)]
-		public int blurIterations = 1;
+		[FormerlySerializedAs("blurIterations")] [Range(1f, 4f)]
+		public int _blurIterations = 1;
 
-		public BlurType blurType;
+		[FormerlySerializedAs("blurType")] public BlurType _blurType;
 
-		public Shader fastBloomShader;
+		[FormerlySerializedAs("fastBloomShader")] public Shader _fastBloomShader;
 
-		private Material fastBloomMaterial;
+		private Material _fastBloomMaterial;
 
 		public enum Resolution
 		{
@@ -42,18 +43,18 @@ namespace CodeBase._ImageEffects
 		public override bool CheckResources()
 		{
 			CheckSupport(false);
-			fastBloomMaterial = CheckShaderAndCreateMaterial(fastBloomShader, fastBloomMaterial);
-			if (!isSupported)
+			_fastBloomMaterial = CheckShaderAndCreateMaterial(_fastBloomShader, _fastBloomMaterial);
+			if (!IsSupported)
 			{
 				ReportAutoDisable();
 			}
-			return isSupported;
+			return IsSupported;
 		}
 
 		private void OnDisable()
 		{
-			if (fastBloomMaterial) 
-				DestroyImmediate(fastBloomMaterial);
+			if (_fastBloomMaterial) 
+				DestroyImmediate(_fastBloomMaterial);
 		}
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -63,32 +64,32 @@ namespace CodeBase._ImageEffects
 				Graphics.Blit(source, destination);
 				return;
 			}
-			int num = (resolution != Resolution.Low) ? 2 : 4;
-			float num2 = (resolution != Resolution.Low) ? 1f : 0.5f;
-			fastBloomMaterial.SetVector("_Parameter", new Vector4(blurSize * num2, 0f, threshold, intensity));
+			int num = (_resolution != Resolution.Low) ? 2 : 4;
+			float num2 = (_resolution != Resolution.Low) ? 1f : 0.5f;
+			_fastBloomMaterial.SetVector("_Parameter", new Vector4(_blurSize * num2, 0f, _threshold, _intensity));
 			source.filterMode = FilterMode.Bilinear;
 			int width = source.width / num;
 			int height = source.height / num;
 			RenderTexture renderTexture = RenderTexture.GetTemporary(width, height, 0, source.format);
 			renderTexture.filterMode = FilterMode.Bilinear;
-			Graphics.Blit(source, renderTexture, fastBloomMaterial, 1);
-			int num3 = (blurType != BlurType.Standard) ? 2 : 0;
-			for (int i = 0; i < blurIterations; i++)
+			Graphics.Blit(source, renderTexture, _fastBloomMaterial, 1);
+			int num3 = (_blurType != BlurType.Standard) ? 2 : 0;
+			for (int i = 0; i < _blurIterations; i++)
 			{
-				fastBloomMaterial.SetVector("_Parameter", new Vector4(blurSize * num2 + (float)i * 1f, 0f, threshold, intensity));
+				_fastBloomMaterial.SetVector("_Parameter", new Vector4(_blurSize * num2 + (float)i * 1f, 0f, _threshold, _intensity));
 				RenderTexture temporary = RenderTexture.GetTemporary(width, height, 0, source.format);
 				temporary.filterMode = FilterMode.Bilinear;
-				Graphics.Blit(renderTexture, temporary, fastBloomMaterial, 2 + num3);
+				Graphics.Blit(renderTexture, temporary, _fastBloomMaterial, 2 + num3);
 				RenderTexture.ReleaseTemporary(renderTexture);
 				renderTexture = temporary;
 				temporary = RenderTexture.GetTemporary(width, height, 0, source.format);
 				temporary.filterMode = FilterMode.Bilinear;
-				Graphics.Blit(renderTexture, temporary, fastBloomMaterial, 3 + num3);
+				Graphics.Blit(renderTexture, temporary, _fastBloomMaterial, 3 + num3);
 				RenderTexture.ReleaseTemporary(renderTexture);
 				renderTexture = temporary;
 			}
-			fastBloomMaterial.SetTexture("_Bloom", renderTexture);
-			Graphics.Blit(source, destination, fastBloomMaterial, 0);
+			_fastBloomMaterial.SetTexture("_Bloom", renderTexture);
+			Graphics.Blit(source, destination, _fastBloomMaterial, 0);
 			RenderTexture.ReleaseTemporary(renderTexture);
 		}
 	}

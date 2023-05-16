@@ -1,34 +1,35 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	public class ButtonHandler : MonoBehaviour
 	{
-		public string Name;
+		[FormerlySerializedAs("Name")] public string _name;
 
 		public void SetDownState()
 		{
-			CrossPlatformInputManager.SetButtonDown(Name);
+			CrossPlatformInputManager.SetButtonDown(_name);
 		}
 
 		public void SetUpState()
 		{
-			CrossPlatformInputManager.SetButtonUp(Name);
+			CrossPlatformInputManager.SetButtonUp(_name);
 		}
 
 		public void SetAxisPositiveState()
 		{
-			CrossPlatformInputManager.SetAxisPositive(Name);
+			CrossPlatformInputManager.SetAxisPositive(_name);
 		}
 
 		public void SetAxisNeutralState()
 		{
-			CrossPlatformInputManager.SetAxisZero(Name);
+			CrossPlatformInputManager.SetAxisZero(_name);
 		}
 
 		public void SetAxisNegativeState()
 		{
-			CrossPlatformInputManager.SetAxisNegative(Name);
+			CrossPlatformInputManager.SetAxisNegative(_name);
 		}
 
 	}

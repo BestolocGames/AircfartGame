@@ -22,21 +22,12 @@ namespace CodeBase._CrossPlatformInput
 			MobileInput
 		}
 		
-		private void OnEnable()
-		{
+		private void OnEnable() => 
 			CheckEnableContent();
-		}
 
 		private void CheckEnableContent()
 		{
-			if (_inputMode == InputMode.MobileInput)
-			{
-				EnableContent(true);
-			}
-			else
-			{
-				EnableContent(false);
-			}
+			EnableContent(_inputMode == InputMode.MobileInput);
 		}
 
 		private void EnableContent(bool enabled)
@@ -45,10 +36,8 @@ namespace CodeBase._CrossPlatformInput
 			{
 				foreach (GameObject gameObject in _content)
 				{
-					if (gameObject != null)
-					{
+					if (gameObject != null) 
 						gameObject.SetActive(enabled);
-					}
 				}
 			}
 			if (_childrenOfThisObject)
@@ -61,13 +50,9 @@ namespace CodeBase._CrossPlatformInput
 			}
 			if (_monoBehaviours.Length > 0)
 			{
-				foreach (MonoBehaviour monoBehaviour in _monoBehaviours)
-				{
+				foreach (MonoBehaviour monoBehaviour in _monoBehaviours) 
 					monoBehaviour.enabled = enabled;
-				}
 			}
 		}
-
-
 	}
 }

@@ -1,5 +1,6 @@
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main
@@ -9,7 +10,7 @@ namespace CodeBase._Main
 	{
 		private void Start()
 		{
-			if (listenToPlayEvent)
+			if (_listenToPlayEvent)
 			{
 				UIEventsPublisher.OnPlayEvent += FadeIn;
 			}
@@ -27,12 +28,12 @@ namespace CodeBase._Main
 			{
 				component.canvasRenderer.SetAlpha(0f);
 				component.enabled = true;
-				component.CrossFadeAlpha(1f, duration, false);
+				component.CrossFadeAlpha(1f, _duration, false);
 			}
 		}
 
-		public bool listenToPlayEvent = true;
+		[FormerlySerializedAs("listenToPlayEvent")] public bool _listenToPlayEvent = true;
 
-		public float duration = 1f;
+		[FormerlySerializedAs("duration")] public float _duration = 1f;
 	}
 }

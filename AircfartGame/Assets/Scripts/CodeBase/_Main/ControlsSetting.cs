@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main
@@ -9,40 +10,40 @@ namespace CodeBase._Main
 		{
 			if (ControlsPrefs.IsMouseEnabled)
 			{
-				if (mouseControls)
+				if (_mouseControls)
 				{
-					mouseControls.isOn = true;
+					_mouseControls.isOn = true;
 				}
 			}
 			else if (ControlsPrefs.IsRollEnabled)
 			{
-				if (classicControls)
+				if (_classicControls)
 				{
-					classicControls.isOn = true;
+					_classicControls.isOn = true;
 				}
 			}
-			else if (casualControls)
+			else if (_casualControls)
 			{
-				casualControls.isOn = true;
+				_casualControls.isOn = true;
 			}
-			if (inversePitchStandalone)
+			if (_inversePitchStandalone)
 			{
-				inversePitchStandalone.isOn = ControlsPrefs.IsInversePitch;
+				_inversePitchStandalone.isOn = ControlsPrefs.IsInversePitch;
 			}
 			if (ControlsPrefs.IsTiltEnabled)
 			{
-				if (tiltControls)
+				if (_tiltControls)
 				{
-					tiltControls.isOn = true;
+					_tiltControls.isOn = true;
 				}
 			}
-			else if (touchControls)
+			else if (_touchControls)
 			{
-				touchControls.isOn = true;
+				_touchControls.isOn = true;
 			}
-			if (inversePitchMobile)
+			if (_inversePitchMobile)
 			{
-				inversePitchMobile.isOn = ControlsPrefs.IsInversePitch;
+				_inversePitchMobile.isOn = ControlsPrefs.IsInversePitch;
 			}
 		}
 
@@ -70,22 +71,22 @@ namespace CodeBase._Main
 			ControlsPrefs.IsTiltEnabled = activated;
 		}
 
-		[Header("Standalone controls UI (Leave empty if not targeting standalone):")]
-		public Toggle classicControls;
+		[FormerlySerializedAs("classicControls")] [Header("Standalone controls UI (Leave empty if not targeting standalone):")]
+		public Toggle _classicControls;
 
-		public Toggle mouseControls;
+		[FormerlySerializedAs("mouseControls")] public Toggle _mouseControls;
 
-		public Toggle casualControls;
+		[FormerlySerializedAs("casualControls")] public Toggle _casualControls;
 
-		[Space]
-		public Toggle inversePitchStandalone;
+		[FormerlySerializedAs("inversePitchStandalone")] [Space]
+		public Toggle _inversePitchStandalone;
 
-		[Header("Mobile controls UI (Leave empty if not targeting mobile):")]
-		public Toggle touchControls;
+		[FormerlySerializedAs("touchControls")] [Header("Mobile controls UI (Leave empty if not targeting mobile):")]
+		public Toggle _touchControls;
 
-		public Toggle tiltControls;
+		[FormerlySerializedAs("tiltControls")] public Toggle _tiltControls;
 
-		[Space]
-		public Toggle inversePitchMobile;
+		[FormerlySerializedAs("inversePitchMobile")] [Space]
+		public Toggle _inversePitchMobile;
 	}
 }

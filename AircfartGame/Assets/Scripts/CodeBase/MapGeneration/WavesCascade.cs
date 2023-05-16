@@ -4,35 +4,35 @@ namespace CodeBase.MapGeneration
 {
     public class WavesCascade
     {
-        public RenderTexture Displacement => displacement;
-        public RenderTexture Derivatives => derivatives;
-        public RenderTexture Turbulence => turbulence;
+        public RenderTexture Displacement => _displacement;
+        public RenderTexture Derivatives => _derivatives;
+        public RenderTexture Turbulence => _turbulence;
 
-        public Texture2D GaussianNoise => gaussianNoise;
-        public RenderTexture PrecomputedData => precomputedData;
-        public RenderTexture InitialSpectrum => initialSpectrum;
+        public Texture2D GaussianNoise => _gaussianNoise;
+        public RenderTexture PrecomputedData => _precomputedData;
+        public RenderTexture InitialSpectrum => _initialSpectrum;
 
-        readonly int size;
-        readonly ComputeShader initialSpectrumShader;
-        readonly ComputeShader timeDependentSpectrumShader;
-        readonly ComputeShader texturesMergerShader;
-        readonly FastFourierTransform fft;
-        readonly Texture2D gaussianNoise;
-        readonly ComputeBuffer paramsBuffer;
-        readonly RenderTexture initialSpectrum;
-        readonly RenderTexture precomputedData;
+        readonly int _size;
+        readonly ComputeShader _initialSpectrumShader;
+        readonly ComputeShader _timeDependentSpectrumShader;
+        readonly ComputeShader _texturesMergerShader;
+        readonly FastFourierTransform _fft;
+        readonly Texture2D _gaussianNoise;
+        readonly ComputeBuffer _paramsBuffer;
+        readonly RenderTexture _initialSpectrum;
+        readonly RenderTexture _precomputedData;
     
-        readonly RenderTexture buffer;
-        readonly RenderTexture DxDz;
-        readonly RenderTexture DyDxz;
-        readonly RenderTexture DyxDyz;
-        readonly RenderTexture DxxDzz;
+        readonly RenderTexture _buffer;
+        readonly RenderTexture _dxDz;
+        readonly RenderTexture _dyDxz;
+        readonly RenderTexture _dyxDyz;
+        readonly RenderTexture _dxxDzz;
 
-        readonly RenderTexture displacement;
-        readonly RenderTexture derivatives;
-        readonly RenderTexture turbulence;
+        readonly RenderTexture _displacement;
+        readonly RenderTexture _derivatives;
+        readonly RenderTexture _turbulence;
 
-        float lambda;
+        float _lambda;
 
         public WavesCascade(int size,
             ComputeShader initialSpectrumShader,
@@ -41,122 +41,122 @@ namespace CodeBase.MapGeneration
             FastFourierTransform fft,
             Texture2D gaussianNoise)
         {
-            this.size = size;
-            this.initialSpectrumShader = initialSpectrumShader;
-            this.timeDependentSpectrumShader = timeDependentSpectrumShader;
-            this.texturesMergerShader = texturesMergerShader;
-            this.fft = fft;
-            this.gaussianNoise = gaussianNoise;
+            this._size = size;
+            this._initialSpectrumShader = initialSpectrumShader;
+            this._timeDependentSpectrumShader = timeDependentSpectrumShader;
+            this._texturesMergerShader = texturesMergerShader;
+            this._fft = fft;
+            this._gaussianNoise = gaussianNoise;
 
-            KERNEL_INITIAL_SPECTRUM = initialSpectrumShader.FindKernel("CalculateInitialSpectrum");
-            KERNEL_CONJUGATE_SPECTRUM = initialSpectrumShader.FindKernel("CalculateConjugatedSpectrum");
-            KERNEL_TIME_DEPENDENT_SPECTRUMS = timeDependentSpectrumShader.FindKernel("CalculateAmplitudes");
-            KERNEL_RESULT_TEXTURES = texturesMergerShader.FindKernel("FillResultTextures");
+            _kernelInitialSpectrum = initialSpectrumShader.FindKernel("CalculateInitialSpectrum");
+            _kernelConjugateSpectrum = initialSpectrumShader.FindKernel("CalculateConjugatedSpectrum");
+            _kernelTimeDependentSpectrums = timeDependentSpectrumShader.FindKernel("CalculateAmplitudes");
+            _kernelResultTextures = texturesMergerShader.FindKernel("FillResultTextures");
 
-            initialSpectrum = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
-            precomputedData = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
-            displacement = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
-            derivatives = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat, true);
-            turbulence = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat, true);
-            paramsBuffer = new ComputeBuffer(2, 8 * sizeof(float));
+            _initialSpectrum = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
+            _precomputedData = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
+            _displacement = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat);
+            _derivatives = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat, true);
+            _turbulence = FastFourierTransform.CreateRenderTexture(size, RenderTextureFormat.ARGBFloat, true);
+            _paramsBuffer = new ComputeBuffer(2, 8 * sizeof(float));
 
-            buffer = FastFourierTransform.CreateRenderTexture(size);
-            DxDz = FastFourierTransform.CreateRenderTexture(size);
-            DyDxz = FastFourierTransform.CreateRenderTexture(size);
-            DyxDyz = FastFourierTransform.CreateRenderTexture(size);
-            DxxDzz = FastFourierTransform.CreateRenderTexture(size);
+            _buffer = FastFourierTransform.CreateRenderTexture(size);
+            _dxDz = FastFourierTransform.CreateRenderTexture(size);
+            _dyDxz = FastFourierTransform.CreateRenderTexture(size);
+            _dyxDyz = FastFourierTransform.CreateRenderTexture(size);
+            _dxxDzz = FastFourierTransform.CreateRenderTexture(size);
         }
 
         public void Dispose()
         {
-            paramsBuffer?.Release();
+            _paramsBuffer?.Release();
         }
 
         public void CalculateInitials(WavesSettings wavesSettings, float lengthScale,
             float cutoffLow, float cutoffHigh)
         {
-            lambda = wavesSettings.lambda;
+            _lambda = wavesSettings._lambda;
 
-            initialSpectrumShader.SetInt(SIZE_PROP, size);
-            initialSpectrumShader.SetFloat(LENGTH_SCALE_PROP, lengthScale);
-            initialSpectrumShader.SetFloat(CUTOFF_HIGH_PROP, cutoffHigh);
-            initialSpectrumShader.SetFloat(CUTOFF_LOW_PROP, cutoffLow);
-            wavesSettings.SetParametersToShader(initialSpectrumShader, KERNEL_INITIAL_SPECTRUM, paramsBuffer);
+            _initialSpectrumShader.SetInt(_sizeProp, _size);
+            _initialSpectrumShader.SetFloat(_lengthScaleProp, lengthScale);
+            _initialSpectrumShader.SetFloat(_cutoffHighProp, cutoffHigh);
+            _initialSpectrumShader.SetFloat(_cutoffLowProp, cutoffLow);
+            wavesSettings.SetParametersToShader(_initialSpectrumShader, _kernelInitialSpectrum, _paramsBuffer);
 
-            initialSpectrumShader.SetTexture(KERNEL_INITIAL_SPECTRUM, H0K_PROP, buffer);
-            initialSpectrumShader.SetTexture(KERNEL_INITIAL_SPECTRUM, PRECOMPUTED_DATA_PROP, precomputedData);
-            initialSpectrumShader.SetTexture(KERNEL_INITIAL_SPECTRUM, NOISE_PROP, gaussianNoise);
-            initialSpectrumShader.Dispatch(KERNEL_INITIAL_SPECTRUM, size / LOCAL_WORK_GROUPS_X, size / LOCAL_WORK_GROUPS_Y, 1);
+            _initialSpectrumShader.SetTexture(_kernelInitialSpectrum, _h0KProp, _buffer);
+            _initialSpectrumShader.SetTexture(_kernelInitialSpectrum, _precomputedDataProp, _precomputedData);
+            _initialSpectrumShader.SetTexture(_kernelInitialSpectrum, _noiseProp, _gaussianNoise);
+            _initialSpectrumShader.Dispatch(_kernelInitialSpectrum, _size / LocalWorkGroupsX, _size / LocalWorkGroupsY, 1);
 
-            initialSpectrumShader.SetTexture(KERNEL_CONJUGATE_SPECTRUM, H0_PROP, initialSpectrum);
-            initialSpectrumShader.SetTexture(KERNEL_CONJUGATE_SPECTRUM, H0K_PROP, buffer);
-            initialSpectrumShader.Dispatch(KERNEL_CONJUGATE_SPECTRUM, size / LOCAL_WORK_GROUPS_X, size / LOCAL_WORK_GROUPS_Y, 1);
+            _initialSpectrumShader.SetTexture(_kernelConjugateSpectrum, _h0Prop, _initialSpectrum);
+            _initialSpectrumShader.SetTexture(_kernelConjugateSpectrum, _h0KProp, _buffer);
+            _initialSpectrumShader.Dispatch(_kernelConjugateSpectrum, _size / LocalWorkGroupsX, _size / LocalWorkGroupsY, 1);
         }
 
         public void CalculateWavesAtTime(float time)
         {
             // Calculating complex amplitudes
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, Dx_Dz_PROP, DxDz);
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, Dy_Dxz_PROP, DyDxz);
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, Dyx_Dyz_PROP, DyxDyz);
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, Dxx_Dzz_PROP, DxxDzz);
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, H0_PROP, initialSpectrum);
-            timeDependentSpectrumShader.SetTexture(KERNEL_TIME_DEPENDENT_SPECTRUMS, PRECOMPUTED_DATA_PROP, precomputedData);
-            timeDependentSpectrumShader.SetFloat(TIME_PROP, time);
-            timeDependentSpectrumShader.Dispatch(KERNEL_TIME_DEPENDENT_SPECTRUMS, size / LOCAL_WORK_GROUPS_X, size / LOCAL_WORK_GROUPS_Y, 1);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _dxDzProp, _dxDz);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _dyDxzProp, _dyDxz);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _dyxDyzProp, _dyxDyz);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _dxxDzzProp, _dxxDzz);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _h0Prop, _initialSpectrum);
+            _timeDependentSpectrumShader.SetTexture(_kernelTimeDependentSpectrums, _precomputedDataProp, _precomputedData);
+            _timeDependentSpectrumShader.SetFloat(_timeProp, time);
+            _timeDependentSpectrumShader.Dispatch(_kernelTimeDependentSpectrums, _size / LocalWorkGroupsX, _size / LocalWorkGroupsY, 1);
 
             // Calculating IFFTs of complex amplitudes
-            fft.IFFT2D(DxDz, buffer, true, false, true);
-            fft.IFFT2D(DyDxz, buffer, true, false, true);
-            fft.IFFT2D(DyxDyz, buffer, true, false, true);
-            fft.IFFT2D(DxxDzz, buffer, true, false, true);
+            _fft.Ifft2D(_dxDz, _buffer, true, false, true);
+            _fft.Ifft2D(_dyDxz, _buffer, true, false, true);
+            _fft.Ifft2D(_dyxDyz, _buffer, true, false, true);
+            _fft.Ifft2D(_dxxDzz, _buffer, true, false, true);
 
             // Filling displacement and normals textures
-            texturesMergerShader.SetFloat("DeltaTime", Time.deltaTime);
+            _texturesMergerShader.SetFloat("DeltaTime", Time.deltaTime);
 
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, Dx_Dz_PROP, DxDz);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, Dy_Dxz_PROP, DyDxz);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, Dyx_Dyz_PROP, DyxDyz);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, Dxx_Dzz_PROP, DxxDzz);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, DISPLACEMENT_PROP, displacement);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, DERIVATIVES_PROP, derivatives);
-            texturesMergerShader.SetTexture(KERNEL_RESULT_TEXTURES, TURBULENCE_PROP, turbulence);
-            texturesMergerShader.SetFloat(LAMBDA_PROP, lambda);
-            texturesMergerShader.Dispatch(KERNEL_RESULT_TEXTURES, size / LOCAL_WORK_GROUPS_X, size / LOCAL_WORK_GROUPS_Y, 1);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _dxDzProp, _dxDz);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _dyDxzProp, _dyDxz);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _dyxDyzProp, _dyxDyz);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _dxxDzzProp, _dxxDzz);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _displacementProp, _displacement);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _derivativesProp, _derivatives);
+            _texturesMergerShader.SetTexture(_kernelResultTextures, _turbulenceProp, _turbulence);
+            _texturesMergerShader.SetFloat(_lambdaProp, _lambda);
+            _texturesMergerShader.Dispatch(_kernelResultTextures, _size / LocalWorkGroupsX, _size / LocalWorkGroupsY, 1);
 
-            derivatives.GenerateMips();
-            turbulence.GenerateMips();
+            _derivatives.GenerateMips();
+            _turbulence.GenerateMips();
         }
 
-        const int LOCAL_WORK_GROUPS_X = 8;
-        const int LOCAL_WORK_GROUPS_Y = 8;
+        const int LocalWorkGroupsX = 8;
+        const int LocalWorkGroupsY = 8;
 
         // Kernel IDs:
-        int KERNEL_INITIAL_SPECTRUM;
-        int KERNEL_CONJUGATE_SPECTRUM;
-        int KERNEL_TIME_DEPENDENT_SPECTRUMS;
-        int KERNEL_RESULT_TEXTURES;
+        int _kernelInitialSpectrum;
+        int _kernelConjugateSpectrum;
+        int _kernelTimeDependentSpectrums;
+        int _kernelResultTextures;
 
         // Property IDs
-        readonly int SIZE_PROP = Shader.PropertyToID("Size");
-        readonly int LENGTH_SCALE_PROP = Shader.PropertyToID("LengthScale");
-        readonly int CUTOFF_HIGH_PROP = Shader.PropertyToID("CutoffHigh");
-        readonly int CUTOFF_LOW_PROP = Shader.PropertyToID("CutoffLow");
+        readonly int _sizeProp = Shader.PropertyToID("Size");
+        readonly int _lengthScaleProp = Shader.PropertyToID("LengthScale");
+        readonly int _cutoffHighProp = Shader.PropertyToID("CutoffHigh");
+        readonly int _cutoffLowProp = Shader.PropertyToID("CutoffLow");
 
-        readonly int NOISE_PROP = Shader.PropertyToID("Noise");
-        readonly int H0_PROP = Shader.PropertyToID("H0");
-        readonly int H0K_PROP = Shader.PropertyToID("H0K");
-        readonly int PRECOMPUTED_DATA_PROP = Shader.PropertyToID("WavesData");
-        readonly int TIME_PROP = Shader.PropertyToID("Time");
+        readonly int _noiseProp = Shader.PropertyToID("Noise");
+        readonly int _h0Prop = Shader.PropertyToID("H0");
+        readonly int _h0KProp = Shader.PropertyToID("H0K");
+        readonly int _precomputedDataProp = Shader.PropertyToID("WavesData");
+        readonly int _timeProp = Shader.PropertyToID("Time");
 
-        readonly int Dx_Dz_PROP = Shader.PropertyToID("Dx_Dz");
-        readonly int Dy_Dxz_PROP = Shader.PropertyToID("Dy_Dxz");
-        readonly int Dyx_Dyz_PROP = Shader.PropertyToID("Dyx_Dyz");
-        readonly int Dxx_Dzz_PROP = Shader.PropertyToID("Dxx_Dzz");
-        readonly int LAMBDA_PROP = Shader.PropertyToID("Lambda");
+        readonly int _dxDzProp = Shader.PropertyToID("Dx_Dz");
+        readonly int _dyDxzProp = Shader.PropertyToID("Dy_Dxz");
+        readonly int _dyxDyzProp = Shader.PropertyToID("Dyx_Dyz");
+        readonly int _dxxDzzProp = Shader.PropertyToID("Dxx_Dzz");
+        readonly int _lambdaProp = Shader.PropertyToID("Lambda");
 
-        readonly int DISPLACEMENT_PROP = Shader.PropertyToID("Displacement");
-        readonly int DERIVATIVES_PROP = Shader.PropertyToID("Derivatives");
-        readonly int TURBULENCE_PROP = Shader.PropertyToID("Turbulence"); 
+        readonly int _displacementProp = Shader.PropertyToID("Displacement");
+        readonly int _derivativesProp = Shader.PropertyToID("Derivatives");
+        readonly int _turbulenceProp = Shader.PropertyToID("Turbulence"); 
     }
 }

@@ -6,7 +6,7 @@ namespace CodeBase._Main
 	{
 		static ControlsPrefs()
 		{
-			if (!PlayerPrefs.HasKey(PREF_KEY_ROLL_ENABLED))
+			if (!PlayerPrefs.HasKey(_prefKeyRollEnabled))
 			{
 				IsRollEnabled = true;
 				IsMouseEnabled = false;
@@ -15,10 +15,10 @@ namespace CodeBase._Main
 			}
 			else
 			{
-				IsRollEnabled = (PlayerPrefs.GetInt(PREF_KEY_ROLL_ENABLED) == 1);
-				IsMouseEnabled = (PlayerPrefs.GetInt(PREF_KEY_MOUSE_ENABLED) == 1);
-				IsTiltEnabled = (PlayerPrefs.GetInt(PREF_KEY_TILT_ENABLED) == 1);
-				IsInversePitch = (PlayerPrefs.GetInt(PREF_KEY_INVERSE_PITCH) == 1);
+				IsRollEnabled = (PlayerPrefs.GetInt(_prefKeyRollEnabled) == 1);
+				IsMouseEnabled = (PlayerPrefs.GetInt(_prefKeyMouseEnabled) == 1);
+				IsTiltEnabled = (PlayerPrefs.GetInt(_prefKeyTiltEnabled) == 1);
+				IsInversePitch = (PlayerPrefs.GetInt(_prefKeyInversePitch) == 1);
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace CodeBase._Main
 			set
 			{
 				_isRollEnabled = value;
-				PlayerPrefs.SetInt(PREF_KEY_ROLL_ENABLED, (!value) ? 0 : 1);
+				PlayerPrefs.SetInt(_prefKeyRollEnabled, (!value) ? 0 : 1);
 				PlayerPrefs.Save();
 			}
 		}
@@ -49,7 +49,7 @@ namespace CodeBase._Main
 			set
 			{
 				_isMouseEnabled = value;
-				PlayerPrefs.SetInt(PREF_KEY_MOUSE_ENABLED, (!value) ? 0 : 1);
+				PlayerPrefs.SetInt(_prefKeyMouseEnabled, (!value) ? 0 : 1);
 				PlayerPrefs.Save();
 			}
 		}
@@ -63,7 +63,7 @@ namespace CodeBase._Main
 			set
 			{
 				_isTiltEnabled = value;
-				PlayerPrefs.SetInt(PREF_KEY_TILT_ENABLED, (!value) ? 0 : 1);
+				PlayerPrefs.SetInt(_prefKeyTiltEnabled, (!value) ? 0 : 1);
 				PlayerPrefs.Save();
 				if (value)
 				{
@@ -88,7 +88,7 @@ namespace CodeBase._Main
 			set
 			{
 				_isInversePitch = value;
-				PlayerPrefs.SetInt(PREF_KEY_INVERSE_PITCH, (!value) ? 0 : 1);
+				PlayerPrefs.SetInt(_prefKeyInversePitch, (!value) ? 0 : 1);
 				PlayerPrefs.Save();
 			}
 		}
@@ -101,12 +101,12 @@ namespace CodeBase._Main
 
 		private static bool _isInversePitch;
 
-		private static string PREF_KEY_ROLL_ENABLED = "FlightControls_RollEnabled";
+		private static string _prefKeyRollEnabled = "FlightControls_RollEnabled";
 
-		private static string PREF_KEY_MOUSE_ENABLED = "FlightControls_MouseEnabled";
+		private static string _prefKeyMouseEnabled = "FlightControls_MouseEnabled";
 
-		private static string PREF_KEY_TILT_ENABLED = "FlightControls_TiltEnabled";
+		private static string _prefKeyTiltEnabled = "FlightControls_TiltEnabled";
 
-		private static string PREF_KEY_INVERSE_PITCH = "FlightControls_InversePitch";
+		private static string _prefKeyInversePitch = "FlightControls_InversePitch";
 	}
 }

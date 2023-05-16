@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._ImageEffects
 {
@@ -14,123 +15,123 @@ namespace CodeBase._ImageEffects
 				enabled = false;
 				return;
 			}
-			if (shaderRGB == null || shaderYUV == null)
+			if (_shaderRGB == null || _shaderYuv == null)
 			{
 				Debug.Log("Noise shaders are not set up! Disabling noise effect.");
 				enabled = false;
 			}
-			else if (!shaderRGB.isSupported)
+			else if (!_shaderRGB.isSupported)
 			{
 				enabled = false;
 			}
-			else if (!shaderYUV.isSupported)
+			else if (!_shaderYuv.isSupported)
 			{
-				rgbFallback = true;
+				_rgbFallback = true;
 			}
 		}
 
-		protected Material material
+		protected Material Material
 		{
 			get
 			{
-				if (m_MaterialRGB == null)
+				if (_mMaterialRGB == null)
 				{
-					m_MaterialRGB = new Material(shaderRGB);
-					m_MaterialRGB.hideFlags = HideFlags.HideAndDontSave;
+					_mMaterialRGB = new Material(_shaderRGB);
+					_mMaterialRGB.hideFlags = HideFlags.HideAndDontSave;
 				}
-				if (m_MaterialYUV == null && !rgbFallback)
+				if (_mMaterialYuv == null && !_rgbFallback)
 				{
-					m_MaterialYUV = new Material(shaderYUV);
-					m_MaterialYUV.hideFlags = HideFlags.HideAndDontSave;
+					_mMaterialYuv = new Material(_shaderYuv);
+					_mMaterialYuv.hideFlags = HideFlags.HideAndDontSave;
 				}
-				return (rgbFallback || monochrome) ? m_MaterialRGB : m_MaterialYUV;
+				return (_rgbFallback || _monochrome) ? _mMaterialRGB : _mMaterialYuv;
 			}
 		}
 
 		protected void OnDisable()
 		{
-			if (m_MaterialRGB)
+			if (_mMaterialRGB)
 			{
-				DestroyImmediate(m_MaterialRGB);
+				DestroyImmediate(_mMaterialRGB);
 			}
-			if (m_MaterialYUV)
+			if (_mMaterialYuv)
 			{
-				DestroyImmediate(m_MaterialYUV);
+				DestroyImmediate(_mMaterialYuv);
 			}
 		}
 
 		private void SanitizeParameters()
 		{
-			grainIntensityMin = Mathf.Clamp(grainIntensityMin, 0f, 5f);
-			grainIntensityMax = Mathf.Clamp(grainIntensityMax, 0f, 5f);
-			scratchIntensityMin = Mathf.Clamp(scratchIntensityMin, 0f, 5f);
-			scratchIntensityMax = Mathf.Clamp(scratchIntensityMax, 0f, 5f);
-			scratchFPS = Mathf.Clamp(scratchFPS, 1f, 30f);
-			scratchJitter = Mathf.Clamp(scratchJitter, 0f, 1f);
-			grainSize = Mathf.Clamp(grainSize, 0.1f, 50f);
+			_grainIntensityMin = Mathf.Clamp(_grainIntensityMin, 0f, 5f);
+			_grainIntensityMax = Mathf.Clamp(_grainIntensityMax, 0f, 5f);
+			_scratchIntensityMin = Mathf.Clamp(_scratchIntensityMin, 0f, 5f);
+			_scratchIntensityMax = Mathf.Clamp(_scratchIntensityMax, 0f, 5f);
+			_scratchFPS = Mathf.Clamp(_scratchFPS, 1f, 30f);
+			_scratchJitter = Mathf.Clamp(_scratchJitter, 0f, 1f);
+			_grainSize = Mathf.Clamp(_grainSize, 0.1f, 50f);
 		}
 
 		private void OnRenderImage(RenderTexture source, RenderTexture destination)
 		{
 			SanitizeParameters();
-			if (scratchTimeLeft <= 0f)
+			if (_scratchTimeLeft <= 0f)
 			{
-				scratchTimeLeft = Random.value * 2f / scratchFPS;
-				scratchX = Random.value;
-				scratchY = Random.value;
+				_scratchTimeLeft = Random.value * 2f / _scratchFPS;
+				_scratchX = Random.value;
+				_scratchY = Random.value;
 			}
-			scratchTimeLeft -= Time.deltaTime;
-			Material material = this.material;
-			material.SetTexture("_GrainTex", grainTexture);
-			material.SetTexture("_ScratchTex", scratchTexture);
-			float num = 1f / grainSize;
-			material.SetVector("_GrainOffsetScale", new Vector4(Random.value, Random.value, (float)Screen.width / (float)grainTexture.width * num, (float)Screen.height / (float)grainTexture.height * num));
-			material.SetVector("_ScratchOffsetScale", new Vector4(scratchX + Random.value * scratchJitter, scratchY + Random.value * scratchJitter, (float)Screen.width / (float)scratchTexture.width, (float)Screen.height / (float)scratchTexture.height));
-			material.SetVector("_Intensity", new Vector4(Random.Range(grainIntensityMin, grainIntensityMax), Random.Range(scratchIntensityMin, scratchIntensityMax), 0f, 0f));
+			_scratchTimeLeft -= Time.deltaTime;
+			Material material = this.Material;
+			material.SetTexture("_GrainTex", _grainTexture);
+			material.SetTexture("_ScratchTex", _scratchTexture);
+			float num = 1f / _grainSize;
+			material.SetVector("_GrainOffsetScale", new Vector4(Random.value, Random.value, (float)Screen.width / (float)_grainTexture.width * num, (float)Screen.height / (float)_grainTexture.height * num));
+			material.SetVector("_ScratchOffsetScale", new Vector4(_scratchX + Random.value * _scratchJitter, _scratchY + Random.value * _scratchJitter, (float)Screen.width / (float)_scratchTexture.width, (float)Screen.height / (float)_scratchTexture.height));
+			material.SetVector("_Intensity", new Vector4(Random.Range(_grainIntensityMin, _grainIntensityMax), Random.Range(_scratchIntensityMin, _scratchIntensityMax), 0f, 0f));
 			Graphics.Blit(source, destination, material);
 		}
 
-		public bool monochrome = true;
+		[FormerlySerializedAs("monochrome")] public bool _monochrome = true;
 
-		private bool rgbFallback;
+		private bool _rgbFallback;
 
-		[Range(0f, 5f)]
-		public float grainIntensityMin = 0.1f;
+		[FormerlySerializedAs("grainIntensityMin")] [Range(0f, 5f)]
+		public float _grainIntensityMin = 0.1f;
 
-		[Range(0f, 5f)]
-		public float grainIntensityMax = 0.2f;
+		[FormerlySerializedAs("grainIntensityMax")] [Range(0f, 5f)]
+		public float _grainIntensityMax = 0.2f;
 
-		[Range(0.1f, 50f)]
-		public float grainSize = 2f;
+		[FormerlySerializedAs("grainSize")] [Range(0.1f, 50f)]
+		public float _grainSize = 2f;
 
-		[Range(0f, 5f)]
-		public float scratchIntensityMin = 0.05f;
+		[FormerlySerializedAs("scratchIntensityMin")] [Range(0f, 5f)]
+		public float _scratchIntensityMin = 0.05f;
 
-		[Range(0f, 5f)]
-		public float scratchIntensityMax = 0.25f;
+		[FormerlySerializedAs("scratchIntensityMax")] [Range(0f, 5f)]
+		public float _scratchIntensityMax = 0.25f;
 
-		[Range(1f, 30f)]
-		public float scratchFPS = 10f;
+		[FormerlySerializedAs("scratchFPS")] [Range(1f, 30f)]
+		public float _scratchFPS = 10f;
 
-		[Range(0f, 1f)]
-		public float scratchJitter = 0.01f;
+		[FormerlySerializedAs("scratchJitter")] [Range(0f, 1f)]
+		public float _scratchJitter = 0.01f;
 
-		public Texture grainTexture;
+		[FormerlySerializedAs("grainTexture")] public Texture _grainTexture;
 
-		public Texture scratchTexture;
+		[FormerlySerializedAs("scratchTexture")] public Texture _scratchTexture;
 
-		public Shader shaderRGB;
+		[FormerlySerializedAs("shaderRGB")] public Shader _shaderRGB;
 
-		public Shader shaderYUV;
+		[FormerlySerializedAs("shaderYUV")] public Shader _shaderYuv;
 
-		private Material m_MaterialRGB;
+		private Material _mMaterialRGB;
 
-		private Material m_MaterialYUV;
+		private Material _mMaterialYuv;
 
-		private float scratchTimeLeft;
+		private float _scratchTimeLeft;
 
-		private float scratchX;
+		private float _scratchX;
 
-		private float scratchY;
+		private float _scratchY;
 	}
 }

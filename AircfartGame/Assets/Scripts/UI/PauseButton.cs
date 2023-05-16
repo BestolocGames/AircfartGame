@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UI
 {
@@ -6,17 +7,15 @@ namespace UI
 	{
 		public virtual void OnClick()
 		{
-			if (active)
+			if (_active)
 			{
 				PauseController pauseController = FindObjectOfType<PauseController>();
-				if (pauseController != null)
-				{
+				if (pauseController != null) 
 					pauseController.Pause();
-				}
 			}
 		}
 
-		[Header("Finds PauseController and calls Pause on click/touch.")]
-		public bool active = true;
+		[FormerlySerializedAs("active")] [Header("Finds PauseController and calls Pause on click/touch.")]
+		public bool _active = true;
 	}
 }

@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main.Player
 {
 	public class ActivateOnTakeOff : MonoBehaviour
 	{
-		public float delay;
+		[FormerlySerializedAs("delay")] public float _delay;
 
-		public GameObject[] objectsToActivate;
+		[FormerlySerializedAs("objectsToActivate")] public GameObject[] _objectsToActivate;
 		
 		private void OnEnable() => 
 			TakeOffPublisher.OnTakeOffEvent += OnTakeOff;
@@ -15,11 +16,11 @@ namespace CodeBase._Main.Player
 			TakeOffPublisher.OnTakeOffEvent -= OnTakeOff;
 
 		private void OnTakeOff() => 
-			Invoke("OnTakeOffCore", delay);
+			Invoke("OnTakeOffCore", _delay);
 
 		private void OnTakeOffCore()
 		{
-			foreach (GameObject gameObject in objectsToActivate)
+			foreach (GameObject gameObject in _objectsToActivate)
 			{
 				if (gameObject != null) 
 					gameObject.SetActive(true);

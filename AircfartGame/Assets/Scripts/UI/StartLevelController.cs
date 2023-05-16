@@ -3,13 +3,41 @@ using CodeBase._Cameras;
 using CodeBase._Main;
 using CodeBase._Main.Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UI
 {
 	public class StartLevelController : MonoBehaviour
 	{
-		public bool levelStarted { get; private set; }
+		#region Fields
 
+		[FormerlySerializedAs("playOnStart")] public bool _playOnStart;
+
+		[FormerlySerializedAs("enablePickupGrowingOnStart")] public bool _enablePickupGrowingOnStart = true;
+
+		[FormerlySerializedAs("cameraPivotFinalPosition")] [Space]
+		public Vector3 _cameraPivotFinalPosition = new Vector3(0f, 10f, -15f);
+
+		private GameObject _airplane;
+
+		private AutoCam _autoCam;
+
+		private float _turnSpeed;
+
+		private GameObject _pivot;
+
+		private Vector3 _initPivotPos;
+
+		private bool _isTweeningIn;
+
+		private float _tweenInProgress;
+
+		private float _tweenInStartTime;
+		
+		public bool LevelStarted { get; private set; }
+
+		#endregion
+		
 		private void Start()
 		{
 			_autoCam = FindObjectOfType<AutoCam>();
@@ -28,7 +56,7 @@ namespace UI
 			}
 			_turnSpeed = _autoCam.TurnSpeed;
 			_autoCam.TurnSpeed = 0f;
-			if (playOnStart)
+			if (_playOnStart)
 			{
 				StartLevel();
 				UIEventsPublisher uieventsPublisher = FindObjectOfType<UIEventsPublisher>();
@@ -54,12 +82,12 @@ namespace UI
 			{
 				_tweenInProgress = Mathf.SmoothStep(0f, 1f, (Time.time - _tweenInStartTime) * 0.14f);
 				_autoCam.TurnSpeed = _tweenInProgress * _turnSpeed;
-				_pivot.transform.localPosition = Vector3.Lerp(_initPivotPos, cameraPivotFinalPosition, _tweenInProgress);
+				_pivot.transform.localPosition = Vector3.Lerp(_initPivotPos, _cameraPivotFinalPosition, _tweenInProgress);
 				if (_tweenInProgress > 0.99f)
 				{
 					_isTweeningIn = false;
 					_autoCam.TurnSpeed = _turnSpeed;
-					_pivot.transform.localPosition = cameraPivotFinalPosition;
+					_pivot.transform.localPosition = _cameraPivotFinalPosition;
 				}
 			}
 		}
@@ -74,17 +102,17 @@ namespace UI
 
 		private IEnumerator StartLevelCoroutine()
 		{
-			levelStarted = true;
+			LevelStarted = true;
 			PauseController pause = FindObjectOfType<PauseController>();
 			if (pause)
 			{
 				pause.enabled = true;
 			}
-			yield return new WaitForSeconds((float)((!playOnStart) ? 3 : 0));
+			yield return new WaitForSeconds((float)((!_playOnStart) ? 3 : 0));
 			MenuFadeInController gss = FindObjectOfType<MenuFadeInController>();
 			if (gss != null)
 			{
-				GameObject mainMenu = gss.mainMenu;
+				GameObject mainMenu = gss._mainMenu;
 				if (mainMenu != null)
 				{
 					mainMenu.SetActive(false);
@@ -94,7 +122,7 @@ namespace UI
 			_isTweeningIn = true;
 			_tweenInStartTime = Time.time;
 			_autoCam.enabled = true;
-			yield return new WaitForSeconds((float)((!playOnStart) ? 2 : 0));
+			yield return new WaitForSeconds((float)((!_playOnStart) ? 2 : 0));
 			MonoBehaviour userControl = _airplane.GetComponent<AirplaneUserControl>();
 			if (userControl == null)
 			{
@@ -102,35 +130,12 @@ namespace UI
 				yield break;
 			}
 			userControl.enabled = true;
-			yield return new WaitForSeconds((float)((!playOnStart) ? 2 : 0));
-			if (enablePickupGrowingOnStart)
+			yield return new WaitForSeconds((float)((!_playOnStart) ? 2 : 0));
+			if (_enablePickupGrowingOnStart)
 			{
-				PickupSphere.growingEnabled = true;
+				PickupSphere.GrowingEnabled = true;
 			}
 			yield break;
 		}
-
-		public bool playOnStart;
-
-		public bool enablePickupGrowingOnStart = true;
-
-		[Space]
-		public Vector3 cameraPivotFinalPosition = new Vector3(0f, 10f, -15f);
-
-		private GameObject _airplane;
-
-		private AutoCam _autoCam;
-
-		private float _turnSpeed;
-
-		private GameObject _pivot;
-
-		private Vector3 _initPivotPos;
-
-		private bool _isTweeningIn;
-
-		private float _tweenInProgress;
-
-		private float _tweenInStartTime;
 	}
 }

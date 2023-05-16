@@ -1,5 +1,6 @@
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -8,26 +9,26 @@ namespace CodeBase._Main
 	{
 		private void Start()
 		{
-			crossFade = GetComponent<CrossFadeCanvasGroups>();
-			startLevelController = FindObjectOfType<StartLevelController>();
-			crossFade.toGroup = mainMenu;
+			_crossFade = GetComponent<CrossFadeCanvasGroups>();
+			_startLevelController = FindObjectOfType<StartLevelController>();
+			_crossFade._toGroup = _mainMenu;
 		}
 
 		public virtual void Activate()
 		{
-			if (startLevelController != null)
+			if (_startLevelController != null)
 			{
-				crossFade.toGroup = ((!startLevelController.levelStarted) ? mainMenu : pauseMenu);
+				_crossFade._toGroup = ((!_startLevelController.LevelStarted) ? _mainMenu : _pauseMenu);
 			}
-			crossFade.Activate();
+			_crossFade.Activate();
 		}
 
-		public CanvasGroup mainMenu;
+		[FormerlySerializedAs("mainMenu")] public CanvasGroup _mainMenu;
 
-		public CanvasGroup pauseMenu;
+		[FormerlySerializedAs("pauseMenu")] public CanvasGroup _pauseMenu;
 
-		private CrossFadeCanvasGroups crossFade;
+		private CrossFadeCanvasGroups _crossFade;
 
-		private StartLevelController startLevelController;
+		private StartLevelController _startLevelController;
 	}
 }

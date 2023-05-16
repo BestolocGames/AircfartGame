@@ -1,21 +1,22 @@
 using CodeBase._ImageEffects;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
 	public class PickupSphere : MonoBehaviour
 	{
-		public static event OnCollectAction OnCollectEvent;
-		[HideInInspector]
-		public UnityEvent OnCollect;
+		public static event CollectAction OnCollectEvent;
+		[FormerlySerializedAs("OnCollect")] [HideInInspector]
+		public UnityEvent _collect;
 
 		private void Start()
 		{
 			_bloom = FindObjectOfType<BloomOptimized>();
 			if (_bloom != null)
 			{
-				_bloomInitValue = _bloom.intensity;
+				_bloomInitValue = _bloom._intensity;
 			}
 			transform.localRotation = Random.rotation;
 		}
@@ -26,18 +27,18 @@ namespace CodeBase._Main
 			{
 				return;
 			}
-			ring1.transform.Rotate(Vector3.right, ringRotationSpeed * Time.deltaTime);
-			ring2.transform.Rotate(Vector3.up, ringRotationSpeed * Time.deltaTime);
-			if (growingEnabled && transform.localScale.x < maxScale)
+			_ring1.transform.Rotate(Vector3.right, _ringRotationSpeed * Time.deltaTime);
+			_ring2.transform.Rotate(Vector3.up, _ringRotationSpeed * Time.deltaTime);
+			if (GrowingEnabled && transform.localScale.x < _maxScale)
 			{
-				transform.localScale += Vector3.one * growthSpeed * Time.deltaTime;
+				transform.localScale += Vector3.one * _growthSpeed * Time.deltaTime;
 			}
 			if (_isTweeningOut)
 			{
 				transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, 5f * Time.deltaTime);
 				if (_bloom != null)
 				{
-					_bloom.intensity = Mathf.Lerp(_bloom.intensity, _bloomInitValue, 5f * Time.deltaTime);
+					_bloom._intensity = Mathf.Lerp(_bloom._intensity, _bloomInitValue, 5f * Time.deltaTime);
 				}
 			}
 		}
@@ -63,12 +64,12 @@ namespace CodeBase._Main
 				_isTweeningOut = true;
 				if (_bloom != null)
 				{
-					_bloom.intensity = 0.5f;
+					_bloom._intensity = 0.5f;
 				}
 				BoidMaster componentInParent2 = GetComponentInParent<BoidMaster>();
 				if (componentInParent2 != null)
 				{
-					componentInParent2.neighborDistance = 250f;
+					componentInParent2._neighborDistance = 250f;
 				}
 				Invoke("DestroyNow", 1f);
 			}
@@ -76,32 +77,32 @@ namespace CodeBase._Main
 
 		public void TweenBloom(float value)
 		{
-			_bloom.intensity = value;
+			_bloom._intensity = value;
 		}
 
 		private void DestroyNow()
 		{
-			_bloom.intensity = _bloomInitValue;
-			DestroyObject(sphere);
-			DestroyObject(ring1);
-			DestroyObject(ring2);
+			_bloom._intensity = _bloomInitValue;
+			DestroyObject(_sphere);
+			DestroyObject(_ring1);
+			DestroyObject(_ring2);
 			_isDestroyed = true;
-			OnCollect.Invoke();
+			_collect.Invoke();
 		}
 
-		public static bool growingEnabled;
+		public static bool GrowingEnabled;
 
-		public float growthSpeed = 0.1f;
+		[FormerlySerializedAs("growthSpeed")] public float _growthSpeed = 0.1f;
 
-		public float maxScale = 40f;
+		[FormerlySerializedAs("maxScale")] public float _maxScale = 40f;
 
-		public float ringRotationSpeed = 150f;
+		[FormerlySerializedAs("ringRotationSpeed")] public float _ringRotationSpeed = 150f;
 
-		public GameObject ring1;
+		[FormerlySerializedAs("ring1")] public GameObject _ring1;
 
-		public GameObject ring2;
+		[FormerlySerializedAs("ring2")] public GameObject _ring2;
 
-		public GameObject sphere;
+		[FormerlySerializedAs("sphere")] public GameObject _sphere;
 
 		private bool _activated;
 
@@ -113,6 +114,6 @@ namespace CodeBase._Main
 
 		private bool _isDestroyed;
 
-		public delegate void OnCollectAction();
+		public delegate void CollectAction();
 	}
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -6,21 +7,21 @@ namespace CodeBase._Main
 	{
 		public virtual void Activate()
 		{
-			toGroup.gameObject.SetActive(true);
-			toGroup.alpha = 0f;
-			toGroup.interactable = true;
-			fromGroup.interactable = false;
-			StartCoroutine(Fader.FadeAlpha(fromGroup, false, speed, delegate()
+			_toGroup.gameObject.SetActive(true);
+			_toGroup.alpha = 0f;
+			_toGroup.interactable = true;
+			_fromGroup.interactable = false;
+			StartCoroutine(Fader.FadeAlpha(_fromGroup, false, _speed, delegate()
 			{
-				fromGroup.gameObject.SetActive(false);
+				_fromGroup.gameObject.SetActive(false);
 			}));
-			StartCoroutine(Fader.FadeAlpha(toGroup, true, speed, null));
+			StartCoroutine(Fader.FadeAlpha(_toGroup, true, _speed, null));
 		}
 
-		public CanvasGroup fromGroup;
+		[FormerlySerializedAs("fromGroup")] public CanvasGroup _fromGroup;
 
-		public CanvasGroup toGroup;
+		[FormerlySerializedAs("toGroup")] public CanvasGroup _toGroup;
 
-		public float speed = 1f;
+		[FormerlySerializedAs("speed")] public float _speed = 1f;
 	}
 }

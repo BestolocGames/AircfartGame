@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	[ExecuteInEditMode]
 	public class PlatformDependentActivator : MonoBehaviour
 	{
-		public GameObject standalone;
+		[FormerlySerializedAs("standalone")] public GameObject _standalone;
 
-		public GameObject mobile;
+		[FormerlySerializedAs("mobile")] public GameObject _mobile;
 	}
 }

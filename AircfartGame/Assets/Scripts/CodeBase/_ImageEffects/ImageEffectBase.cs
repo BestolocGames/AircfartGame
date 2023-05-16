@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._ImageEffects
 {
@@ -13,35 +14,35 @@ namespace CodeBase._ImageEffects
 				enabled = false;
 				return;
 			}
-			if (!shader || !shader.isSupported)
+			if (!_shader || !_shader.isSupported)
 			{
 				enabled = false;
 			}
 		}
 
-		protected Material material
+		protected Material Material
 		{
 			get
 			{
-				if (m_Material == null)
+				if (_mMaterial == null)
 				{
-					m_Material = new Material(shader);
-					m_Material.hideFlags = HideFlags.HideAndDontSave;
+					_mMaterial = new Material(_shader);
+					_mMaterial.hideFlags = HideFlags.HideAndDontSave;
 				}
-				return m_Material;
+				return _mMaterial;
 			}
 		}
 
 		protected virtual void OnDisable()
 		{
-			if (m_Material)
+			if (_mMaterial)
 			{
-				DestroyImmediate(m_Material);
+				DestroyImmediate(_mMaterial);
 			}
 		}
 
-		public Shader shader;
+		[FormerlySerializedAs("shader")] public Shader _shader;
 
-		private Material m_Material;
+		private Material _mMaterial;
 	}
 }

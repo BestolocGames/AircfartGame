@@ -25,9 +25,9 @@ namespace CodeBase._Main
 			}
 		}
 
-		private const float MIN_LANDING_DURATION = 1f;
+		private const float MinLandingDuration = 1f;
 
-		private const float MIN_TIME_BETWEEN_LANDINGS = 10f;
+		private const float MinTimeBetweenLandings = 10f;
 
 		private float _collisionEnterTime = -1f;
 	}

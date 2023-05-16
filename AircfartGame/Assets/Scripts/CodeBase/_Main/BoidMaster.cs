@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -6,7 +7,7 @@ namespace CodeBase._Main
 	{
 		private void Start()
 		{
-			for (int i = 0; i < spawnCount; i++)
+			for (int i = 0; i < _spawnCount; i++)
 			{
 				Spawn();
 			}
@@ -14,14 +15,14 @@ namespace CodeBase._Main
 
 		public GameObject Spawn()
 		{
-			return Spawn(transform.position + Random.insideUnitSphere * spawnRadius);
+			return Spawn(transform.position + Random.insideUnitSphere * _spawnRadius);
 		}
 
 		public GameObject Spawn(Vector3 position)
 		{
 			Quaternion rotation = Quaternion.Slerp(transform.rotation, Random.rotation, 0.25f);
-			GameObject gameObject = Instantiate(boidPrefab, position, rotation) as GameObject;
-			gameObject.GetComponent<BoidUnit>().master = this;
+			GameObject gameObject = Instantiate(_boidPrefab, position, rotation) as GameObject;
+			gameObject.GetComponent<BoidUnit>()._master = this;
 			if (transform.parent != null)
 			{
 				gameObject.transform.parent = transform.parent;
@@ -29,20 +30,20 @@ namespace CodeBase._Main
 			return gameObject;
 		}
 
-		public GameObject boidPrefab;
+		[FormerlySerializedAs("boidPrefab")] public GameObject _boidPrefab;
 
-		public int spawnCount = 10;
+		[FormerlySerializedAs("spawnCount")] public int _spawnCount = 10;
 
-		public float spawnRadius = 100f;
+		[FormerlySerializedAs("spawnRadius")] public float _spawnRadius = 100f;
 
-		public float neighborDistance = 10f;
+		[FormerlySerializedAs("neighborDistance")] public float _neighborDistance = 10f;
 
-		public float speed = 10f;
+		[FormerlySerializedAs("speed")] public float _speed = 10f;
 
-		public float speedVariation = 1f;
+		[FormerlySerializedAs("speedVariation")] public float _speedVariation = 1f;
 
-		public float rotationCoefficient = 5f;
+		[FormerlySerializedAs("rotationCoefficient")] public float _rotationCoefficient = 5f;
 
-		public LayerMask searchLayer;
+		[FormerlySerializedAs("searchLayer")] public LayerMask _searchLayer;
 	}
 }

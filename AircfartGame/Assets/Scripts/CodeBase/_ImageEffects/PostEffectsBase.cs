@@ -6,11 +6,11 @@ namespace CodeBase._ImageEffects
 	[ExecuteInEditMode]
 	public class PostEffectsBase : MonoBehaviour
 	{
-		protected bool supportHDRTextures = true;
+		protected bool SupportHDRTextures = true;
 
-		protected bool supportDX11;
+		protected bool SupportDx11;
 
-		protected bool isSupported = true;
+		protected bool IsSupported = true;
 		
 		protected Material CheckShaderAndCreateMaterial(Shader s, Material m2Create)
 		{
@@ -72,7 +72,7 @@ namespace CodeBase._ImageEffects
 
 		private void OnEnable()
 		{
-			isSupported = true;
+			IsSupported = true;
 		}
 
 		protected bool CheckSupport()
@@ -83,7 +83,7 @@ namespace CodeBase._ImageEffects
 		public virtual bool CheckResources()
 		{
 			Debug.LogWarning("CheckResources () for " + ToString() + " should be overwritten.");
-			return isSupported;
+			return IsSupported;
 		}
 
 		protected void Start()
@@ -93,9 +93,9 @@ namespace CodeBase._ImageEffects
 
 		protected bool CheckSupport(bool needDepth)
 		{
-			isSupported = true;
-			supportHDRTextures = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf);
-			supportDX11 = (SystemInfo.graphicsShaderLevel >= 50 && SystemInfo.supportsComputeShaders);
+			IsSupported = true;
+			SupportHDRTextures = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.ARGBHalf);
+			SupportDx11 = (SystemInfo.graphicsShaderLevel >= 50 && SystemInfo.supportsComputeShaders);
 			if (!SystemInfo.supportsImageEffects || !SystemInfo.supportsRenderTextures)
 			{
 				NotSupported();
@@ -119,7 +119,7 @@ namespace CodeBase._ImageEffects
 			{
 				return false;
 			}
-			if (needHdr && !supportHDRTextures)
+			if (needHdr && !SupportHDRTextures)
 			{
 				NotSupported();
 				return false;
@@ -129,7 +129,7 @@ namespace CodeBase._ImageEffects
 
 		public bool Dx11Support()
 		{
-			return supportDX11;
+			return SupportDx11;
 		}
 
 		protected void ReportAutoDisable()
@@ -158,7 +158,7 @@ namespace CodeBase._ImageEffects
 		protected void NotSupported()
 		{
 			enabled = false;
-			isSupported = false;
+			IsSupported = false;
 		}
 
 		protected void DrawBorder(RenderTexture dest, Material material)

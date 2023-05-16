@@ -4,18 +4,16 @@ namespace CodeBase._Cameras
 {
 	public abstract class PivotBasedCameraRig : AbstractTargetFollower
 	{
-		protected Transform m_Cam;
+		private Transform _cameraTransform;
 
-		protected Transform m_Pivot;
+		private Transform _pivot;
 
-		protected Vector3 m_LastTargetPosition;
+		protected Vector3 LastTargetPosition;
 		
 		protected virtual void Awake()
 		{
-			m_Cam = GetComponentInChildren<Camera>().transform;
-			m_Pivot = m_Cam.parent;
+			_cameraTransform = GetComponentInChildren<Camera>().transform;
+			_pivot = _cameraTransform.parent;
 		}
-
-
 	}
 }

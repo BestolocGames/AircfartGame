@@ -30,13 +30,13 @@ namespace CodeBase._Main
 			yield return new WaitForSeconds(0.5f);
 			_saturationTweenStartTime = Time.time;
 			WaitForEndOfFrame wait = new WaitForEndOfFrame();
-			while (_colorCorrectionFx.saturation < 0.99f)
+			while (_colorCorrectionFx._saturation < 0.99f)
 			{
 				float deltaTime = Time.time - _saturationTweenStartTime;
-				_colorCorrectionFx.saturation = Mathf.SmoothStep(0f, 1f, deltaTime * 1.2f);
+				_colorCorrectionFx._saturation = Mathf.SmoothStep(0f, 1f, deltaTime * 1.2f);
 				yield return wait;
 			}
-			_colorCorrectionFx.saturation = 1f;
+			_colorCorrectionFx._saturation = 1f;
 			yield break;
 		}
 

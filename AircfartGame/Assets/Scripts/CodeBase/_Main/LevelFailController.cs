@@ -2,39 +2,32 @@ using System.Collections;
 using CodeBase._ImageEffects;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
 	public class LevelFailController : MonoBehaviour
 	{
-		[Tooltip("If true, level fail menu will be shown. Otherwise, scene will be restarted.")]
-		public bool showLevelFailMenu = true;
+		[FormerlySerializedAs("showLevelFailMenu")] [Tooltip("If true, level fail menu will be shown. Otherwise, scene will be restarted.")]
+		public bool _showLevelFailMenu = true;
 
-		[Tooltip("Game over screen.")]
-		public CanvasGroup levelFailMenu;
+		[FormerlySerializedAs("levelFailMenu")] [Tooltip("Game over screen.")]
+		public CanvasGroup _levelFailMenu;
 
 		private float _defaultBloomIntensity;
 
 		private float _defaultBloomThreshold;
 		
-		private void OnEnable()
-		{
-			FuelController.OnFuelEmptyEvent += HandleLevelFailed;
+		private void OnEnable() => 
 			RevivePermissionProvider.OnReviveGranted += HandleReviveGranted;
-		}
 
-		private void OnDisable()
-		{
-			FuelController.OnFuelEmptyEvent -= HandleLevelFailed;
+		private void OnDisable() => 
 			RevivePermissionProvider.OnReviveGranted -= HandleReviveGranted;
-		}
 
 		public virtual void HandleLevelFailed()
 		{
-			if (showLevelFailMenu)
-			{
+			if (_showLevelFailMenu)
 				StartCoroutine(FadeOutCoroutine());
-			}
 			else
 			{
 				Time.timeScale = 1f;
@@ -49,21 +42,19 @@ namespace CodeBase._Main
 			if (bloom == null)
 			{
 				Time.timeScale = 0f;
-				if (levelFailMenu != null)
-				{
-					levelFailMenu.gameObject.SetActive(true);
-				}
+				if (_levelFailMenu != null) 
+					_levelFailMenu.gameObject.SetActive(true);
 				yield break;
 			}
 			float targetIntensity = 2.5f;
 			WaitForEndOfFrame wait = new WaitForEndOfFrame();
 			float tween = 1f;
-			_defaultBloomIntensity = bloom.intensity;
-			_defaultBloomThreshold = bloom.threshold;
-			if (levelFailMenu != null)
+			_defaultBloomIntensity = bloom._intensity;
+			_defaultBloomThreshold = bloom._threshold;
+			if (_levelFailMenu != null)
 			{
-				levelFailMenu.alpha = 0f;
-				levelFailMenu.gameObject.SetActive(true);
+				_levelFailMenu.alpha = 0f;
+				_levelFailMenu.gameObject.SetActive(true);
 			}
 			float prevTime = Time.realtimeSinceStartup;
 			float deltaTime = 0f;
@@ -71,20 +62,18 @@ namespace CodeBase._Main
 			{
 				deltaTime = Time.realtimeSinceStartup - prevTime;
 				prevTime = Time.realtimeSinceStartup;
-				bloom.intensity = Mathf.Lerp(bloom.intensity, targetIntensity, 1.5f * deltaTime);
-				bloom.threshold = Mathf.Lerp(bloom.threshold, 0f, 1.5f * deltaTime);
+				bloom._intensity = Mathf.Lerp(bloom._intensity, targetIntensity, 1.5f * deltaTime);
+				bloom._threshold = Mathf.Lerp(bloom._threshold, 0f, 1.5f * deltaTime);
 				tween = Mathf.Lerp(tween, 0f, 1.5f * deltaTime);
 				Time.timeScale = tween;
-				if (levelFailMenu != null)
+				if (_levelFailMenu != null)
 				{
-					levelFailMenu.alpha = 1f - tween;
+					_levelFailMenu.alpha = 1f - tween;
 				}
 				yield return wait;
 			}
-			if (levelFailMenu != null)
-			{
-				levelFailMenu.alpha = 1f;
-			}
+			if (_levelFailMenu != null) 
+				_levelFailMenu.alpha = 1f;
 			Time.timeScale = 0f;
 			yield break;
 		}
@@ -92,7 +81,7 @@ namespace CodeBase._Main
 		private void HandleReviveGranted()
 		{
 			Time.timeScale = 1f;
-			levelFailMenu.gameObject.SetActive(false);
+			_levelFailMenu.gameObject.SetActive(false);
 			StartCoroutine(TweenIn());
 		}
 
@@ -108,13 +97,13 @@ namespace CodeBase._Main
 			float tween = 1f;
 			while ((double)tween > 0.1)
 			{
-				bloom.intensity = Mathf.Lerp(bloom.intensity, targetIntensity, 2f * Time.deltaTime);
-				bloom.threshold = Mathf.Lerp(bloom.threshold, 0f, 2f * Time.deltaTime);
+				bloom._intensity = Mathf.Lerp(bloom._intensity, targetIntensity, 2f * Time.deltaTime);
+				bloom._threshold = Mathf.Lerp(bloom._threshold, 0f, 2f * Time.deltaTime);
 				tween = Mathf.Lerp(tween, 0f, 3f * Time.deltaTime);
 				yield return wait;
 			}
-			bloom.intensity = _defaultBloomIntensity;
-			bloom.threshold = _defaultBloomThreshold;
+			bloom._intensity = _defaultBloomIntensity;
+			bloom._threshold = _defaultBloomThreshold;
 			yield break;
 		}
 	}

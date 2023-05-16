@@ -5,36 +5,34 @@ namespace Utility
 {
 	public class ObjectResetter : MonoBehaviour
 	{
+		private Vector3 _originalPosition;
+
+		private Quaternion _originalRotation;
+
+		private Rigidbody _rigidbody;
+		
 		private void Start()
 		{
-			originalPosition = transform.position;
-			originalRotation = transform.rotation;
-			Rigidbody = GetComponent<Rigidbody>();
+			_originalPosition = transform.position;
+			_originalRotation = transform.rotation;
+			_rigidbody = GetComponent<Rigidbody>();
 		}
 
-		public void DelayedReset(float delay)
-		{
+		public void DelayedReset(float delay) => 
 			StartCoroutine(ResetCoroutine(delay));
-		}
 
-		public IEnumerator ResetCoroutine(float delay)
+		private IEnumerator ResetCoroutine(float delay)
 		{
 			yield return new WaitForSeconds(delay);
-			transform.position = originalPosition;
-			transform.rotation = originalRotation;
-			if (Rigidbody)
+			transform.position = _originalPosition;
+			transform.rotation = _originalRotation;
+			if (_rigidbody)
 			{
-				Rigidbody.velocity = Vector3.zero;
-				Rigidbody.angularVelocity = Vector3.zero;
+				_rigidbody.velocity = Vector3.zero;
+				_rigidbody.angularVelocity = Vector3.zero;
 			}
 			SendMessage("Reset");
 			yield break;
 		}
-
-		private Vector3 originalPosition;
-
-		private Quaternion originalRotation;
-
-		private Rigidbody Rigidbody;
 	}
 }

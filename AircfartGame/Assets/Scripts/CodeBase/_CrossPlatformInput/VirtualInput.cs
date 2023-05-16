@@ -5,62 +5,62 @@ namespace CodeBase._CrossPlatformInput
 {
 	public abstract class VirtualInput
 	{
-		public Vector3 virtualMousePosition { get; private set; }
+		public Vector3 VirtualMousePosition { get; private set; }
 
 		public bool AxisExists(string name) => 
-			m_VirtualAxes.ContainsKey(name);
+			MVirtualAxes.ContainsKey(name);
 
 		public bool ButtonExists(string name) => 
-			m_VirtualButtons.ContainsKey(name);
+			MVirtualButtons.ContainsKey(name);
 
 		public void RegisterVirtualAxis(CrossPlatformInputManager.VirtualAxis axis)
 		{
-			if (m_VirtualAxes.ContainsKey(axis.name))
+			if (MVirtualAxes.ContainsKey(axis.Name))
 			{
-				UnRegisterVirtualAxis(axis.name);
+				UnRegisterVirtualAxis(axis.Name);
 				RegisterVirtualAxis(axis);
 			}
 			else
 			{
-				m_VirtualAxes.Add(axis.name, axis);
-				if (!axis.matchWithInputManager) m_AlwaysUseVirtual.Add(axis.name);
+				MVirtualAxes.Add(axis.Name, axis);
+				if (!axis.MatchWithInputManager) MAlwaysUseVirtual.Add(axis.Name);
 			}
 		}
 
 		public void RegisterVirtualButton(CrossPlatformInputManager.VirtualButton button)
 		{
-			if (m_VirtualButtons.ContainsKey(button.name))
-				Debug.LogError("There is already a virtual button named " + button.name + " registered.");
+			if (MVirtualButtons.ContainsKey(button.Name))
+				Debug.LogError("There is already a virtual button named " + button.Name + " registered.");
 			else
 			{
-				m_VirtualButtons.Add(button.name, button);
-				if (!button.matchWithInputManager) m_AlwaysUseVirtual.Add(button.name);
+				MVirtualButtons.Add(button.Name, button);
+				if (!button.MatchWithInputManager) MAlwaysUseVirtual.Add(button.Name);
 			}
 		}
 
 		public void UnRegisterVirtualAxis(string name)
 		{
-			if (m_VirtualAxes.ContainsKey(name)) 
-				m_VirtualAxes.Remove(name);
+			if (MVirtualAxes.ContainsKey(name)) 
+				MVirtualAxes.Remove(name);
 		}
 
 		public void UnRegisterVirtualButton(string name)
 		{
-			if (m_VirtualButtons.ContainsKey(name)) 
-				m_VirtualButtons.Remove(name);
+			if (MVirtualButtons.ContainsKey(name)) 
+				MVirtualButtons.Remove(name);
 		}
 
 		public CrossPlatformInputManager.VirtualAxis VirtualAxisReference(string name) => 
-			(!m_VirtualAxes.ContainsKey(name)) ? null : m_VirtualAxes[name];
+			(!MVirtualAxes.ContainsKey(name)) ? null : MVirtualAxes[name];
 
 		public void SetVirtualMousePositionX(float f) => 
-			virtualMousePosition = new Vector3(f, virtualMousePosition.y, virtualMousePosition.z);
+			VirtualMousePosition = new Vector3(f, VirtualMousePosition.y, VirtualMousePosition.z);
 
 		public void SetVirtualMousePositionY(float f) => 
-			virtualMousePosition = new Vector3(virtualMousePosition.x, f, virtualMousePosition.z);
+			VirtualMousePosition = new Vector3(VirtualMousePosition.x, f, VirtualMousePosition.z);
 
 		public void SetVirtualMousePositionZ(float f) => 
-			virtualMousePosition = new Vector3(virtualMousePosition.x, virtualMousePosition.y, f);
+			VirtualMousePosition = new Vector3(VirtualMousePosition.x, VirtualMousePosition.y, f);
 
 		public abstract float GetAxis(string name, bool raw);
 
@@ -84,10 +84,10 @@ namespace CodeBase._CrossPlatformInput
 
 		public abstract Vector3 MousePosition();
 
-		protected Dictionary<string, CrossPlatformInputManager.VirtualAxis> m_VirtualAxes = new Dictionary<string, CrossPlatformInputManager.VirtualAxis>();
+		protected Dictionary<string, CrossPlatformInputManager.VirtualAxis> MVirtualAxes = new Dictionary<string, CrossPlatformInputManager.VirtualAxis>();
 
-		protected Dictionary<string, CrossPlatformInputManager.VirtualButton> m_VirtualButtons = new Dictionary<string, CrossPlatformInputManager.VirtualButton>();
+		protected Dictionary<string, CrossPlatformInputManager.VirtualButton> MVirtualButtons = new Dictionary<string, CrossPlatformInputManager.VirtualButton>();
 
-		protected List<string> m_AlwaysUseVirtual = new List<string>();
+		protected List<string> MAlwaysUseVirtual = new List<string>();
 	}
 }

@@ -1,23 +1,24 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase.MapGeneration
 {
     public class MapDisplay : MonoBehaviour
     {
-        public Renderer textureRenderer;
-        public MeshFilter meshFilter;
-        public MeshRenderer meshRenderer;
+        [FormerlySerializedAs("textureRenderer")] public Renderer _textureRenderer;
+        [FormerlySerializedAs("meshFilter")] public MeshFilter _meshFilter;
+        [FormerlySerializedAs("meshRenderer")] public MeshRenderer _meshRenderer;
 
         public void DrawTexture(Texture2D texture)
         {
-            textureRenderer.sharedMaterial.mainTexture = texture;
-            textureRenderer.transform.localScale = new Vector3(texture.width, 1, texture.height);
+            _textureRenderer.sharedMaterial.mainTexture = texture;
+            _textureRenderer.transform.localScale = new Vector3(texture.width, 1, texture.height);
         }
 
         public void DrawMesh(MeshData meshData)
         {
-            meshFilter.sharedMesh = meshData.CreateMesh();
-            meshFilter.transform.localScale = Vector3.one * FindObjectOfType<MapPreview>().meshSettings.meshScale;
+            _meshFilter.sharedMesh = meshData.CreateMesh();
+            _meshFilter.transform.localScale = Vector3.one * FindObjectOfType<MapPreview>()._meshSettings._meshScale;
         }
     }
 }

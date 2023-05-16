@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -9,9 +10,9 @@ namespace CodeBase._Main
 			Vector3 position = this.transform.position;
 			Quaternion rotation = this.transform.rotation;
 			Vector3 a = Vector3.zero;
-			Vector3 vector = master.transform.forward;
-			Vector3 vector2 = master.transform.position;
-			Collider[] array = Physics.OverlapSphere(position, master.neighborDistance, master.searchLayer);
+			Vector3 vector = _master.transform.forward;
+			Vector3 vector2 = _master.transform.position;
+			Collider[] array = Physics.OverlapSphere(position, _master._neighborDistance, _master._searchLayer);
 			foreach (Collider collider in array)
 			{
 				if (!(collider.gameObject == gameObject))
@@ -30,11 +31,11 @@ namespace CodeBase._Main
 			Quaternion quaternion = Quaternion.FromToRotation(Vector3.forward, vector3.normalized);
 			if (quaternion != rotation)
 			{
-				float t = Mathf.Exp(-master.rotationCoefficient * Time.deltaTime);
+				float t = Mathf.Exp(-_master._rotationCoefficient * Time.deltaTime);
 				transform.rotation = Quaternion.Slerp(quaternion, rotation, t);
 			}
 			float num = Mathf.PerlinNoise(Time.time, Random.value * 10f) * 2f - 1f;
-			float d2 = master.speed * (1f + num * master.speedVariation);
+			float d2 = _master._speed * (1f + num * _master._speedVariation);
 			this.transform.position = position + this.transform.forward * d2 * Time.deltaTime;
 		}
 
@@ -42,10 +43,10 @@ namespace CodeBase._Main
 		{
 			Vector3 a = transform.position - target.transform.position;
 			float magnitude = a.magnitude;
-			float num = Mathf.Clamp01(1f - magnitude / master.neighborDistance);
+			float num = Mathf.Clamp01(1f - magnitude / _master._neighborDistance);
 			return a * (num / magnitude);
 		}
 
-		public BoidMaster master;
+		[FormerlySerializedAs("master")] public BoidMaster _master;
 	}
 }

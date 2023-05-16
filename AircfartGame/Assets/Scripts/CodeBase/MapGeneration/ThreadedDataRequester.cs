@@ -7,16 +7,16 @@ namespace CodeBase.MapGeneration
 {
 	public class ThreadedDataRequester : MonoBehaviour {
 
-		static ThreadedDataRequester instance;
-		Queue<ThreadInfo> dataQueue = new Queue<ThreadInfo>();
+		static ThreadedDataRequester _instance;
+		Queue<ThreadInfo> _dataQueue = new Queue<ThreadInfo>();
 
 		void Awake() {
-			instance = FindObjectOfType<ThreadedDataRequester> ();
+			_instance = FindObjectOfType<ThreadedDataRequester> ();
 		}
 
 		public static void RequestData(Func<object> generateData, Action<object> callback) {
 			ThreadStart threadStart = delegate {
-				instance.DataThread (generateData, callback);
+				_instance.DataThread (generateData, callback);
 			};
 
 			new Thread (threadStart).Start ();
@@ -24,29 +24,29 @@ namespace CodeBase.MapGeneration
 
 		void DataThread(Func<object> generateData, Action<object> callback) {
 			object data = generateData ();
-			lock (dataQueue) {
-				dataQueue.Enqueue (new ThreadInfo (callback, data));
+			lock (_dataQueue) {
+				_dataQueue.Enqueue (new ThreadInfo (callback, data));
 			}
 		}
 		
 
 		void Update() {
-			if (dataQueue.Count > 0) {
-				for (int i = 0; i < dataQueue.Count; i++) {
-					ThreadInfo threadInfo = dataQueue.Dequeue ();
-					threadInfo.callback (threadInfo.parameter);
+			if (_dataQueue.Count > 0) {
+				for (int i = 0; i < _dataQueue.Count; i++) {
+					ThreadInfo threadInfo = _dataQueue.Dequeue ();
+					threadInfo.Callback (threadInfo.Parameter);
 				}
 			}
 		}
 
 		struct ThreadInfo {
-			public readonly Action<object> callback;
-			public readonly object parameter;
+			public readonly Action<object> Callback;
+			public readonly object Parameter;
 
 			public ThreadInfo (Action<object> callback, object parameter)
 			{
-				this.callback = callback;
-				this.parameter = parameter;
+				this.Callback = callback;
+				this.Parameter = parameter;
 			}
 
 		}

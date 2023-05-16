@@ -1,77 +1,78 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main
 {
 	public class MenuFadeInController : MonoBehaviour
 	{
-		public GameObject mainMenu;
+		[FormerlySerializedAs("mainMenu")] public GameObject _mainMenu;
 
-		[Space]
-		public CanvasGroup playButton;
+		[FormerlySerializedAs("playButton")] [Space]
+		public CanvasGroup _playButton;
 
-		public CanvasGroup controlsButton;
+		[FormerlySerializedAs("controlsButton")] public CanvasGroup _controlsButton;
 
-		public Image gameLogoImage;
+		[FormerlySerializedAs("gameLogoImage")] public Image _gameLogoImage;
 
-		public Image instructionsImage;
+		[FormerlySerializedAs("instructionsImage")] public Image _instructionsImage;
 		
 		private IEnumerator Start()
 		{
-			if (mainMenu == null)
+			if (_mainMenu == null)
 			{
-				mainMenu = GameObject.Find("MainMenu");
-				if (mainMenu == null)
+				_mainMenu = GameObject.Find("MainMenu");
+				if (_mainMenu == null)
 				{
 					Debug.LogError("Can't find MainMenu object in the scene.");
 					yield break;
 				}
 			}
-			mainMenu.SetActive(true);
-			if (gameLogoImage)
+			_mainMenu.SetActive(true);
+			if (_gameLogoImage)
 			{
-				gameLogoImage.enabled = false;
+				_gameLogoImage.enabled = false;
 			}
-			if (playButton)
+			if (_playButton)
 			{
-				playButton.interactable = false;
-				playButton.alpha = 0f;
+				_playButton.interactable = false;
+				_playButton.alpha = 0f;
 			}
-			if (controlsButton)
+			if (_controlsButton)
 			{
-				controlsButton.interactable = false;
-				controlsButton.alpha = 0f;
+				_controlsButton.interactable = false;
+				_controlsButton.alpha = 0f;
 			}
-			if (instructionsImage)
+			if (_instructionsImage)
 			{
-				instructionsImage.enabled = false;
+				_instructionsImage.enabled = false;
 			}
 			yield return new WaitForSeconds(1f);
-			if (gameLogoImage)
+			if (_gameLogoImage)
 			{
-				gameLogoImage.enabled = true;
-				gameLogoImage.canvasRenderer.SetAlpha(0f);
-				gameLogoImage.CrossFadeAlpha(1f, 1f, false);
+				_gameLogoImage.enabled = true;
+				_gameLogoImage.canvasRenderer.SetAlpha(0f);
+				_gameLogoImage.CrossFadeAlpha(1f, 1f, false);
 				yield return new WaitForSeconds(2f);
 			}
-			if (playButton)
+			if (_playButton)
 			{
-				Fader.FadeAlpha(this, playButton, true, 0.3f, null);
-				playButton.interactable = true;
+				Fader.FadeAlpha(this, _playButton, true, 0.3f, null);
+				_playButton.interactable = true;
 				yield return new WaitForSeconds(0.5f);
 			}
-			if (controlsButton)
+			if (_controlsButton)
 			{
-				Fader.FadeAlpha(this, controlsButton, true, 0.3f, null);
-				controlsButton.interactable = true;
+				Fader.FadeAlpha(this, _controlsButton, true, 0.3f, null);
+				_controlsButton.interactable = true;
 				yield return new WaitForSeconds(0.5f);
 			}
-			if (instructionsImage)
+			if (_instructionsImage)
 			{
-				instructionsImage.enabled = true;
-				instructionsImage.canvasRenderer.SetAlpha(0f);
-				instructionsImage.CrossFadeAlpha(1f, 2.5f, false);
+				_instructionsImage.enabled = true;
+				_instructionsImage.canvasRenderer.SetAlpha(0f);
+				_instructionsImage.CrossFadeAlpha(1f, 2.5f, false);
 				yield return new WaitForSeconds(2f);
 			}
 			yield break;

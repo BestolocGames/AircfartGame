@@ -1,5 +1,6 @@
 using CodeBase._CrossPlatformInput;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI
@@ -7,21 +8,21 @@ namespace UI
 	[RequireComponent(typeof(Button))]
 	public class KeyButton : MonoBehaviour
 	{
-		public Button button { get; private set; }
+		private Button Button { get; set; }
 
 		private void Awake()
 		{
-			button = GetComponent<Button>();
+			Button = GetComponent<Button>();
 		}
 
 		private void Update()
 		{
-			if (!button.interactable)
+			if (!Button.interactable)
 			{
 				return;
 			}
 			bool flag = false;
-			foreach (string name in axis)
+			foreach (string name in _axis)
 			{
 				if (CrossPlatformInputManager.GetButtonDown(name))
 				{
@@ -29,7 +30,7 @@ namespace UI
 					break;
 				}
 			}
-			foreach (KeyCode key in keys)
+			foreach (KeyCode key in _keys)
 			{
 				if (Input.GetKeyDown(key))
 				{
@@ -39,12 +40,12 @@ namespace UI
 			}
 			if (flag)
 			{
-				button.onClick.Invoke();
+				Button.onClick.Invoke();
 			}
 		}
 
-		public string[] axis;
+		[FormerlySerializedAs("axis")] public string[] _axis;
 
-		public KeyCode[] keys;
+		[FormerlySerializedAs("keys")] public KeyCode[] _keys;
 	}
 }

@@ -1,14 +1,15 @@
 using CodeBase._Main;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	public class MobileInputUIActivator : MonoBehaviour
 	{
-		public GameObject[] tiltUIElements;
+		[FormerlySerializedAs("tiltUIElements")] public GameObject[] _tiltUIElements;
 
-		public GameObject[] touchUIElements;
+		[FormerlySerializedAs("touchUIElements")] public GameObject[] _touchUIElements;
 
 		private bool _isTiltUiMode;
 		
@@ -17,13 +18,10 @@ namespace CodeBase._CrossPlatformInput
 			ControlsPrefs.OnTiltEnabledEvent += HandleTiltEnabled;
 			ControlsPrefs.OnTiltDisabledEvent += HandleTiltDisabled;
 			if (ControlsPrefs.IsTiltEnabled)
-			{
 				HandleTiltEnabled();
-			}
 			else
-			{
 				HandleTiltDisabled();
-			}
+			
 			UIEventsPublisher.OnPlayEvent += UpdateUI;
 		}
 
@@ -50,28 +48,18 @@ namespace CodeBase._CrossPlatformInput
 		{
 			if (_isTiltUiMode)
 			{
-				foreach (GameObject gameObject in touchUIElements)
-				{
+				foreach (GameObject gameObject in _touchUIElements) 
 					gameObject.SetActive(false);
-				}
-				foreach (GameObject gameObject2 in tiltUIElements)
-				{
+				foreach (GameObject gameObject2 in _tiltUIElements) 
 					gameObject2.SetActive(true);
-				}
 			}
 			else
 			{
-				foreach (GameObject gameObject3 in tiltUIElements)
-				{
+				foreach (GameObject gameObject3 in _tiltUIElements) 
 					gameObject3.SetActive(false);
-				}
-				foreach (GameObject gameObject4 in touchUIElements)
-				{
+				foreach (GameObject gameObject4 in _touchUIElements) 
 					gameObject4.SetActive(true);
-				}
 			}
 		}
-
-
 	}
 }

@@ -1,81 +1,82 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace CodeBase.MapGeneration
 {
     public class WavesGenerator : MonoBehaviour
     {
-        public WavesCascade cascade0;
-        public WavesCascade cascade1;
-        public WavesCascade cascade2;
+        public WavesCascade Cascade0;
+        public WavesCascade Cascade1;
+        public WavesCascade Cascade2;
 
         // must be a power of 2
-        [SerializeField]
-        int size = 256;
+        [FormerlySerializedAs("size")] [SerializeField]
+        int _size = 256;
 
-        [SerializeField]
-        WavesSettings wavesSettings;
-        [SerializeField]
-        bool alwaysRecalculateInitials = false;
-        [SerializeField]
-        float lengthScale0 = 250;
-        [SerializeField]
-        float lengthScale1 = 17;
-        [SerializeField]
-        float lengthScale2 = 5;
+        [FormerlySerializedAs("wavesSettings")] [SerializeField]
+        WavesSettings _wavesSettings;
+        [FormerlySerializedAs("alwaysRecalculateInitials")] [SerializeField]
+        bool _alwaysRecalculateInitials = false;
+        [FormerlySerializedAs("lengthScale0")] [SerializeField]
+        float _lengthScale0 = 250;
+        [FormerlySerializedAs("lengthScale1")] [SerializeField]
+        float _lengthScale1 = 17;
+        [FormerlySerializedAs("lengthScale2")] [SerializeField]
+        float _lengthScale2 = 5;
 
-        [SerializeField]
-        ComputeShader fftShader;
-        [SerializeField]
-        ComputeShader initialSpectrumShader;
-        [SerializeField]
-        ComputeShader timeDependentSpectrumShader;
-        [SerializeField]
-        ComputeShader texturesMergerShader;
+        [FormerlySerializedAs("fftShader")] [SerializeField]
+        ComputeShader _fftShader;
+        [FormerlySerializedAs("initialSpectrumShader")] [SerializeField]
+        ComputeShader _initialSpectrumShader;
+        [FormerlySerializedAs("timeDependentSpectrumShader")] [SerializeField]
+        ComputeShader _timeDependentSpectrumShader;
+        [FormerlySerializedAs("texturesMergerShader")] [SerializeField]
+        ComputeShader _texturesMergerShader;
 
-        Texture2D gaussianNoise;
-        FastFourierTransform fft;
-        Texture2D physicsReadback;
+        Texture2D _gaussianNoise;
+        FastFourierTransform _fft;
+        Texture2D _physicsReadback;
 
         private void Awake()
         {
             Application.targetFrameRate = -1;
-            fft = new FastFourierTransform(size, fftShader);
-            gaussianNoise = GetNoiseTexture(size);
+            _fft = new FastFourierTransform(_size, _fftShader);
+            _gaussianNoise = GetNoiseTexture(_size);
 
-            cascade0 = new WavesCascade(size, initialSpectrumShader, timeDependentSpectrumShader, texturesMergerShader, fft, gaussianNoise);
-            cascade1 = new WavesCascade(size, initialSpectrumShader, timeDependentSpectrumShader, texturesMergerShader, fft, gaussianNoise);
-            cascade2 = new WavesCascade(size, initialSpectrumShader, timeDependentSpectrumShader, texturesMergerShader, fft, gaussianNoise);
+            Cascade0 = new WavesCascade(_size, _initialSpectrumShader, _timeDependentSpectrumShader, _texturesMergerShader, _fft, _gaussianNoise);
+            Cascade1 = new WavesCascade(_size, _initialSpectrumShader, _timeDependentSpectrumShader, _texturesMergerShader, _fft, _gaussianNoise);
+            Cascade2 = new WavesCascade(_size, _initialSpectrumShader, _timeDependentSpectrumShader, _texturesMergerShader, _fft, _gaussianNoise);
 
             InitialiseCascades();
 
-            physicsReadback = new Texture2D(size, size, TextureFormat.RGBAFloat, false);
+            _physicsReadback = new Texture2D(_size, _size, TextureFormat.RGBAFloat, false);
         }
 
         void InitialiseCascades()
         {
-            float boundary1 = 2 * Mathf.PI / lengthScale1 * 6f;
-            float boundary2 = 2 * Mathf.PI / lengthScale2 * 6f;
-            cascade0.CalculateInitials(wavesSettings, lengthScale0, 0.0001f, boundary1);
-            cascade1.CalculateInitials(wavesSettings, lengthScale1, boundary1, boundary2);
-            cascade2.CalculateInitials(wavesSettings, lengthScale2, boundary2, 9999);
+            float boundary1 = 2 * Mathf.PI / _lengthScale1 * 6f;
+            float boundary2 = 2 * Mathf.PI / _lengthScale2 * 6f;
+            Cascade0.CalculateInitials(_wavesSettings, _lengthScale0, 0.0001f, boundary1);
+            Cascade1.CalculateInitials(_wavesSettings, _lengthScale1, boundary1, boundary2);
+            Cascade2.CalculateInitials(_wavesSettings, _lengthScale2, boundary2, 9999);
 
-            Shader.SetGlobalFloat("LengthScale0", lengthScale0);
-            Shader.SetGlobalFloat("LengthScale1", lengthScale1);
-            Shader.SetGlobalFloat("LengthScale2", lengthScale2);
+            Shader.SetGlobalFloat("LengthScale0", _lengthScale0);
+            Shader.SetGlobalFloat("LengthScale1", _lengthScale1);
+            Shader.SetGlobalFloat("LengthScale2", _lengthScale2);
         }
 
         private void Update()
         {
-            if (alwaysRecalculateInitials)
+            if (_alwaysRecalculateInitials)
             {
                 InitialiseCascades();
             }
 
-            cascade0.CalculateWavesAtTime(Time.time);
-            cascade1.CalculateWavesAtTime(Time.time);
-            cascade2.CalculateWavesAtTime(Time.time);
+            Cascade0.CalculateWavesAtTime(Time.time);
+            Cascade1.CalculateWavesAtTime(Time.time);
+            Cascade2.CalculateWavesAtTime(Time.time);
 
             RequestReadbacks();
         }
@@ -119,14 +120,14 @@ namespace CodeBase.MapGeneration
 
         private void OnDestroy()
         {
-            cascade0.Dispose();
-            cascade1.Dispose();
-            cascade2.Dispose();
+            Cascade0.Dispose();
+            Cascade1.Dispose();
+            Cascade2.Dispose();
         }
 
         void RequestReadbacks()
         {
-            AsyncGPUReadback.Request(cascade0.Displacement, 0, TextureFormat.RGBAFloat, OnCompleteReadback);
+            AsyncGPUReadback.Request(Cascade0.Displacement, 0, TextureFormat.RGBAFloat, OnCompleteReadback);
         }
 
         public float GetWaterHeight(Vector3 position)
@@ -140,11 +141,11 @@ namespace CodeBase.MapGeneration
 
         public Vector3 GetWaterDisplacement(Vector3 position)
         {
-            Color c = physicsReadback.GetPixelBilinear(position.x / lengthScale0, position.z / lengthScale0);
+            Color c = _physicsReadback.GetPixelBilinear(position.x / _lengthScale0, position.z / _lengthScale0);
             return new Vector3(c.r, c.g, c.b);
         }
 
-        void OnCompleteReadback(AsyncGPUReadbackRequest request) => OnCompleteReadback(request, physicsReadback);
+        void OnCompleteReadback(AsyncGPUReadbackRequest request) => OnCompleteReadback(request, _physicsReadback);
 
         void OnCompleteReadback(AsyncGPUReadbackRequest request, Texture2D result)
         {

@@ -1,39 +1,50 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Utility
 {
 	public class PlatformSpecificContent : MonoBehaviour
 	{
-		private void OnEnable()
+		 [SerializeField]
+		private BuildTargetGroup _mBuildTargetGroup;
+
+		 [SerializeField]
+		private GameObject[] _mContent = new GameObject[0];
+
+		 [SerializeField]
+		private MonoBehaviour[] _mMonoBehaviours = new MonoBehaviour[0];
+
+		[FormerlySerializedAs("m_ChildrenOfThisObject")] [SerializeField]
+		private bool _mChildrenOfThisObject;
+
+		private enum BuildTargetGroup
 		{
-			CheckEnableContent();
+			Standalone,
+			Mobile
 		}
+		
+		private void OnEnable() => 
+			CheckEnableContent();
 
 		private void CheckEnableContent()
 		{
-			if (m_BuildTargetGroup == BuildTargetGroup.Mobile)
-			{
+			if (_mBuildTargetGroup == BuildTargetGroup.Mobile)
 				EnableContent(true);
-			}
 			else
-			{
 				EnableContent(false);
-			}
 		}
 
 		private void EnableContent(bool enabled)
 		{
-			if (m_Content.Length > 0)
+			if (_mContent.Length > 0)
 			{
-				foreach (GameObject gameObject in m_Content)
+				foreach (GameObject gameObject in _mContent)
 				{
-					if (gameObject != null)
-					{
+					if (gameObject != null) 
 						gameObject.SetActive(enabled);
-					}
 				}
 			}
-			if (m_ChildrenOfThisObject)
+			if (_mChildrenOfThisObject)
 			{
 				foreach (object obj in this.transform)
 				{
@@ -41,31 +52,12 @@ namespace Utility
 					transform.gameObject.SetActive(enabled);
 				}
 			}
-			if (m_MonoBehaviours.Length > 0)
+			if (_mMonoBehaviours.Length > 0)
 			{
-				foreach (MonoBehaviour monoBehaviour in m_MonoBehaviours)
-				{
+				foreach (MonoBehaviour monoBehaviour in _mMonoBehaviours) 
 					monoBehaviour.enabled = enabled;
-				}
 			}
 		}
 
-		[SerializeField]
-		private BuildTargetGroup m_BuildTargetGroup;
-
-		[SerializeField]
-		private GameObject[] m_Content = new GameObject[0];
-
-		[SerializeField]
-		private MonoBehaviour[] m_MonoBehaviours = new MonoBehaviour[0];
-
-		[SerializeField]
-		private bool m_ChildrenOfThisObject;
-
-		private enum BuildTargetGroup
-		{
-			Standalone,
-			Mobile
-		}
 	}
 }

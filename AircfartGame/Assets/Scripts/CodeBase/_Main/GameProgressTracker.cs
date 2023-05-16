@@ -1,17 +1,18 @@
 using System.Collections;
 using CodeBase._ImageEffects;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main
 {
 	public class GameProgressTracker : MonoBehaviour
 	{
-		public Text pickupsCurrentText;
+		[FormerlySerializedAs("pickupsCurrentText")] public Text _pickupsCurrentText;
 
-		public Text pickupsTotalText;
+		[FormerlySerializedAs("pickupsTotalText")] public Text _pickupsTotalText;
 
-		public Image pickupIconImage;
+		[FormerlySerializedAs("pickupIconImage")] public Image _pickupIconImage;
 
 		private int _numPickupsCollected;
 
@@ -19,35 +20,35 @@ namespace CodeBase._Main
 		
 		private void Start()
 		{
-			if (pickupsCurrentText == null)
+			if (_pickupsCurrentText == null)
 			{
 				GameObject gameObject = GameObject.Find("PickupsCurrent");
 				if (gameObject != null)
 				{
-					pickupsCurrentText = gameObject.GetComponent<Text>();
+					_pickupsCurrentText = gameObject.GetComponent<Text>();
 				}
 			}
-			if (pickupsTotalText == null)
+			if (_pickupsTotalText == null)
 			{
 				GameObject gameObject2 = GameObject.Find("PickupsTotal");
 				if (gameObject2 != null)
 				{
-					pickupsTotalText = gameObject2.GetComponent<Text>();
+					_pickupsTotalText = gameObject2.GetComponent<Text>();
 				}
 			}
-			if (pickupIconImage == null)
+			if (_pickupIconImage == null)
 			{
 				GameObject gameObject3 = GameObject.Find("PickupIcon");
 				if (gameObject3 != null)
 				{
-					pickupIconImage = gameObject3.GetComponent<Image>();
+					_pickupIconImage = gameObject3.GetComponent<Image>();
 				}
 			}
 			PickupSphere[] array = FindObjectsOfType<PickupSphere>();
 			_numPickupsTotal = array.Length;
-			if (pickupsTotalText != null)
+			if (_pickupsTotalText != null)
 			{
-				pickupsTotalText.text = _numPickupsTotal.ToString();
+				_pickupsTotalText.text = _numPickupsTotal.ToString();
 			}
 			PickupSphere.OnCollectEvent += RegisterPickup;
 		}
@@ -62,8 +63,8 @@ namespace CodeBase._Main
 			if (_numPickupsCollected == 0) 
 				ShowPickupCounter();
 			_numPickupsCollected++;
-			if (pickupsCurrentText != null) 
-				pickupsCurrentText.text = _numPickupsCollected.ToString();
+			if (_pickupsCurrentText != null) 
+				_pickupsCurrentText.text = _numPickupsCollected.ToString();
 			if (_numPickupsCollected >= _numPickupsTotal) 
 				RegisterLevelComplete();
 		}
@@ -78,7 +79,7 @@ namespace CodeBase._Main
 			BloomOptimized bloom = FindObjectOfType<BloomOptimized>();
 			float targetIntensity = 2.5f;
 			MusicController musicController = FindObjectOfType<MusicController>();
-			bool tweenMusic = musicController != null && musicController.gameplay != null;
+			bool tweenMusic = musicController != null && musicController._gameplay != null;
 			WaitForEndOfFrame wait = new WaitForEndOfFrame();
 			float tween = 1f;
 			float tweenSpeed = 0.5f;
@@ -92,12 +93,12 @@ namespace CodeBase._Main
 				lastTime = Time.realtimeSinceStartup;
 				if (bloom != null)
 				{
-					bloom.intensity = Mathf.Lerp(bloom.intensity, targetIntensity, tweenSpeed * deltaTime);
-					bloom.threshold = Mathf.Lerp(bloom.threshold, 0f, tweenSpeed * deltaTime);
+					bloom._intensity = Mathf.Lerp(bloom._intensity, targetIntensity, tweenSpeed * deltaTime);
+					bloom._threshold = Mathf.Lerp(bloom._threshold, 0f, tweenSpeed * deltaTime);
 				}
 				if (tweenMusic)
 				{
-					musicController.gameplay.volume = Mathf.Lerp(musicController.gameplay.volume, 0f, tweenSpeed * deltaTime);
+					musicController._gameplay.volume = Mathf.Lerp(musicController._gameplay.volume, 0f, tweenSpeed * deltaTime);
 				}
 				Time.timeScale = Mathf.Lerp(Time.timeScale, 0f, tweenSpeed * deltaTime);
 				Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
@@ -116,23 +117,23 @@ namespace CodeBase._Main
 
 		private void ShowPickupCounter()
 		{
-			if (pickupIconImage != null)
+			if (_pickupIconImage != null)
 			{
-				pickupIconImage.enabled = true;
-				pickupIconImage.canvasRenderer.SetAlpha(0f);
-				pickupIconImage.CrossFadeAlpha(1f, 5f, false);
+				_pickupIconImage.enabled = true;
+				_pickupIconImage.canvasRenderer.SetAlpha(0f);
+				_pickupIconImage.CrossFadeAlpha(1f, 5f, false);
 			}
-			if (pickupsCurrentText != null)
+			if (_pickupsCurrentText != null)
 			{
-				pickupsCurrentText.enabled = true;
-				pickupsCurrentText.canvasRenderer.SetAlpha(0f);
-				pickupsCurrentText.CrossFadeAlpha(1f, 5f, false);
+				_pickupsCurrentText.enabled = true;
+				_pickupsCurrentText.canvasRenderer.SetAlpha(0f);
+				_pickupsCurrentText.CrossFadeAlpha(1f, 5f, false);
 			}
-			if (pickupsTotalText != null)
+			if (_pickupsTotalText != null)
 			{
-				pickupsTotalText.enabled = true;
-				pickupsTotalText.canvasRenderer.SetAlpha(0f);
-				pickupsTotalText.CrossFadeAlpha(1f, 5f, false);
+				_pickupsTotalText.enabled = true;
+				_pickupsTotalText.canvasRenderer.SetAlpha(0f);
+				_pickupsTotalText.CrossFadeAlpha(1f, 5f, false);
 			}
 		}
 	}

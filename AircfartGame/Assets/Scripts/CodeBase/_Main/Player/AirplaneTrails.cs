@@ -1,28 +1,29 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main.Player
 {
 	public class AirplaneTrails : MonoBehaviour
 	{
-		public GameObject trailsContainer;
+		[FormerlySerializedAs("trailsContainer")] public GameObject _trailsContainer;
 
 		public virtual void ActivateTrails()
 		{
-			if (trailsContainer != null) 
-				trailsContainer.SetActive(true);
+			if (_trailsContainer != null) 
+				_trailsContainer.SetActive(true);
 		}
 
 		public virtual void DeactivateTrails()
 		{
-			if (trailsContainer != null) 
-				trailsContainer.SetActive(false);
+			if (_trailsContainer != null) 
+				_trailsContainer.SetActive(false);
 		}
 
 		public virtual void ClearTrails()
 		{
-			if (trailsContainer != null)
+			if (_trailsContainer != null)
 			{
-				TrailRenderer[] componentsInChildren = trailsContainer.GetComponentsInChildren<TrailRenderer>();
+				TrailRenderer[] componentsInChildren = _trailsContainer.GetComponentsInChildren<TrailRenderer>();
 				foreach (TrailRenderer trailRenderer in componentsInChildren) 
 					trailRenderer.Clear();
 			}

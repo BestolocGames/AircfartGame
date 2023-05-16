@@ -6,10 +6,8 @@ namespace CodeBase._CrossPlatformInput
 	[ExecuteInEditMode]
 	public class MobileControlRig : MonoBehaviour
 	{
-		private void OnEnable()
-		{
+		private void OnEnable() => 
 			CheckEnableControlRig();
-		}
 
 		private void Start()
 		{
@@ -22,10 +20,8 @@ namespace CodeBase._CrossPlatformInput
 			}
 		}
 
-		private void CheckEnableControlRig()
-		{
+		private void CheckEnableControlRig() => 
 			EnableControlRig(true);
-		}
 
 		private void EnableControlRig(bool enabled)
 		{

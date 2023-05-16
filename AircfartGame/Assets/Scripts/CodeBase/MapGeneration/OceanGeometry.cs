@@ -5,67 +5,66 @@ namespace CodeBase.MapGeneration
 {
     public class OceanGeometry : MonoBehaviour
     {
-        [SerializeField] 
-        WavesGenerator wavesGenerator;
-        [SerializeField]
-        Transform viewer;
-        [SerializeField]
-        Material oceanMaterial;
-        [SerializeField]
-        bool updateMaterialProperties;
-        [SerializeField]
-        bool showMaterialLods;
+         [SerializeField] private WavesGenerator _wavesGenerator;
+        
+         [SerializeField] private Transform _viewer;
+        
+         [SerializeField] private Material _oceanMaterial;
+         
+         [SerializeField] private bool _updateMaterialProperties;
+        
+         [SerializeField]
+        bool _showMaterialLods;
 
-        [SerializeField]
-        float lengthScale = 10;
-        [SerializeField, Range(1, 40)]
-        int vertexDensity = 30;
-        [SerializeField, Range(0, 8)]
-        int clipLevels = 8;
-        [SerializeField, Range(0, 100)]
-        float skirtSize = 50;
+         [SerializeField] private float _lengthScale = 10;
+         
+         [SerializeField, Range(1, 40)] private int _vertexDensity = 30;
+         
+         [SerializeField, Range(0, 8)] private int _clipLevels = 8;
+        
+         [SerializeField, Range(0, 100)] private float _skirtSize = 50;
 
-        List<Element> rings = new List<Element>();
-        List<Element> trims = new List<Element>();
-        Element center;
-        Element skirt;
-        Quaternion[] trimRotations;
-        int previousVertexDensity;
-        float previousSkirtSize;
+         private List<Element> _rings = new List<Element>();
+         private List<Element> _trims = new List<Element>();
+         private Element _center;
+        Element _skirt;
+        Quaternion[] _trimRotations;
+        int _previousVertexDensity;
+        float _previousSkirtSize;
 
-        Material[] materials;
+        Material[] _materials;
 
         private void Start()
         {
-            if (viewer == null)
-                viewer = Camera.main.transform;
+            if (_viewer == null)
+                _viewer = Camera.main.transform;
 
-            oceanMaterial.SetTexture("_Displacement_c0", wavesGenerator.cascade0.Displacement);
-            oceanMaterial.SetTexture("_Derivatives_c0", wavesGenerator.cascade0.Derivatives);
-            oceanMaterial.SetTexture("_Turbulence_c0", wavesGenerator.cascade0.Turbulence);
+            _oceanMaterial.SetTexture("_Displacement_c0", _wavesGenerator.Cascade0.Displacement);
+            _oceanMaterial.SetTexture("_Derivatives_c0", _wavesGenerator.Cascade0.Derivatives);
+            _oceanMaterial.SetTexture("_Turbulence_c0", _wavesGenerator.Cascade0.Turbulence);
 
-            oceanMaterial.SetTexture("_Displacement_c1", wavesGenerator.cascade1.Displacement);
-            oceanMaterial.SetTexture("_Derivatives_c1", wavesGenerator.cascade1.Derivatives);
-            oceanMaterial.SetTexture("_Turbulence_c1", wavesGenerator.cascade1.Turbulence);
+            _oceanMaterial.SetTexture("_Displacement_c1", _wavesGenerator.Cascade1.Displacement);
+            _oceanMaterial.SetTexture("_Derivatives_c1", _wavesGenerator.Cascade1.Derivatives);
+            _oceanMaterial.SetTexture("_Turbulence_c1", _wavesGenerator.Cascade1.Turbulence);
 
-            oceanMaterial.SetTexture("_Displacement_c2", wavesGenerator.cascade2.Displacement);
-            oceanMaterial.SetTexture("_Derivatives_c2", wavesGenerator.cascade2.Derivatives);
-            oceanMaterial.SetTexture("_Turbulence_c2", wavesGenerator.cascade2.Turbulence);
+            _oceanMaterial.SetTexture("_Displacement_c2", _wavesGenerator.Cascade2.Displacement);
+            _oceanMaterial.SetTexture("_Derivatives_c2", _wavesGenerator.Cascade2.Derivatives);
+            _oceanMaterial.SetTexture("_Turbulence_c2", _wavesGenerator.Cascade2.Turbulence);
 
 
-            materials = new Material[3];
-            materials[0] = new Material(oceanMaterial);
-            materials[0].EnableKeyword("CLOSE");
+            _materials = new Material[3];
+            _materials[0] = new Material(_oceanMaterial);
+            _materials[0].EnableKeyword("CLOSE");
 
-            materials[1] = new Material(oceanMaterial);
-            materials[1].EnableKeyword("MID");
-            materials[1].DisableKeyword("CLOSE");
+            _materials[1] = new Material(_oceanMaterial);
+            _materials[1].EnableKeyword("MID");
+            _materials[1].DisableKeyword("CLOSE");
 
-            materials[2] = new Material(oceanMaterial);
-            materials[2].DisableKeyword("MID");
-            materials[2].DisableKeyword("CLOSE");
+            _materials[2] = new Material(_oceanMaterial);
+            _materials[2].DisableKeyword("MID");
+            _materials[2].DisableKeyword("CLOSE");
 
-            trimRotations = new Quaternion[]
+            _trimRotations = new Quaternion[]
             {
                 Quaternion.AngleAxis(180, Vector3.up),
                 Quaternion.AngleAxis(90, Vector3.up),
@@ -78,12 +77,12 @@ namespace CodeBase.MapGeneration
 
         private void Update()
         {
-            if (rings.Count != clipLevels || trims.Count != clipLevels
-                                          || previousVertexDensity != vertexDensity || !Mathf.Approximately(previousSkirtSize, skirtSize))
+            if (_rings.Count != _clipLevels || _trims.Count != _clipLevels
+                                          || _previousVertexDensity != _vertexDensity || !Mathf.Approximately(_previousSkirtSize, _skirtSize))
             {
                 InstantiateMeshes();
-                previousVertexDensity = vertexDensity;
-                previousSkirtSize = skirtSize;
+                _previousVertexDensity = _vertexDensity;
+                _previousSkirtSize = _skirtSize;
             }
 
             UpdatePositions();
@@ -92,44 +91,44 @@ namespace CodeBase.MapGeneration
 
         void UpdateMaterials()
         {
-            if (updateMaterialProperties && !showMaterialLods)
+            if (_updateMaterialProperties && !_showMaterialLods)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    materials[i].CopyPropertiesFromMaterial(oceanMaterial);
+                    _materials[i].CopyPropertiesFromMaterial(_oceanMaterial);
                 }
-                materials[0].EnableKeyword("CLOSE");
-                materials[1].EnableKeyword("MID");
-                materials[1].DisableKeyword("CLOSE");
-                materials[2].DisableKeyword("MID");
-                materials[2].DisableKeyword("CLOSE");
+                _materials[0].EnableKeyword("CLOSE");
+                _materials[1].EnableKeyword("MID");
+                _materials[1].DisableKeyword("CLOSE");
+                _materials[2].DisableKeyword("MID");
+                _materials[2].DisableKeyword("CLOSE");
             }
-            if (showMaterialLods)
+            if (_showMaterialLods)
             {
-                materials[0].SetColor("_Color", Color.red * 0.6f);
-                materials[1].SetColor("_Color", Color.green * 0.6f);
-                materials[2].SetColor("_Color", Color.blue * 0.6f);
+                _materials[0].SetColor("_Color", Color.red * 0.6f);
+                _materials[1].SetColor("_Color", Color.green * 0.6f);
+                _materials[2].SetColor("_Color", Color.blue * 0.6f);
             }
 
             int activeLevels = ActiveLodlevels();
-            center.MeshRenderer.material = GetMaterial(clipLevels - activeLevels - 1);
+            _center.MeshRenderer.material = GetMaterial(_clipLevels - activeLevels - 1);
 
-            for (int i = 0; i < rings.Count; i++)
+            for (int i = 0; i < _rings.Count; i++)
             {
-                rings[i].MeshRenderer.material = GetMaterial(clipLevels - activeLevels + i);
-                trims[i].MeshRenderer.material = GetMaterial(clipLevels - activeLevels + i);
+                _rings[i].MeshRenderer.material = GetMaterial(_clipLevels - activeLevels + i);
+                _trims[i].MeshRenderer.material = GetMaterial(_clipLevels - activeLevels + i);
             }
         }
 
         Material GetMaterial(int lodLevel)
         {
             if (lodLevel - 2 <= 0)
-                return materials[0];
+                return _materials[0];
 
             if (lodLevel - 2 <= 2)
-                return materials[1];
+                return _materials[1];
 
-            return materials[2];
+            return _materials[2];
         }
 
         void UpdatePositions()
@@ -139,57 +138,57 @@ namespace CodeBase.MapGeneration
             float y = 2.8f;
 
             float scale = ClipLevelScale(-1, activeLevels);
-            Vector3 previousSnappedPosition = Snap(viewer.position, scale * 2);
-            center.Transform.position = previousSnappedPosition + OffsetFromCenter(-1, activeLevels);
-            center.Transform.position = new Vector3(center.Transform.position.x, y, center.Transform.position.z);
-            center.Transform.localScale = new Vector3(scale, 1, scale);
+            Vector3 previousSnappedPosition = Snap(_viewer.position, scale * 2);
+            _center.Transform.position = previousSnappedPosition + OffsetFromCenter(-1, activeLevels);
+            _center.Transform.position = new Vector3(_center.Transform.position.x, y, _center.Transform.position.z);
+            _center.Transform.localScale = new Vector3(scale, 1, scale);
 
-            for (int i = 0; i < clipLevels; i++)
+            for (int i = 0; i < _clipLevels; i++)
             {
-                rings[i].Transform.gameObject.SetActive(i < activeLevels);
-                trims[i].Transform.gameObject.SetActive(i < activeLevels);
+                _rings[i].Transform.gameObject.SetActive(i < activeLevels);
+                _trims[i].Transform.gameObject.SetActive(i < activeLevels);
                 if (i >= activeLevels) continue;
 
                 scale = ClipLevelScale(i, activeLevels);
                 Vector3 centerOffset = OffsetFromCenter(i, activeLevels);
-                Vector3 snappedPosition = Snap(viewer.position, scale * 2);
+                Vector3 snappedPosition = Snap(_viewer.position, scale * 2);
 
                 Vector3 trimPosition = centerOffset + snappedPosition + scale * (k - 1) / 2 * new Vector3(1, 0, 1);
                 int shiftX = previousSnappedPosition.x - snappedPosition.x < float.Epsilon ? 1 : 0;
                 int shiftZ = previousSnappedPosition.z - snappedPosition.z < float.Epsilon ? 1 : 0;
                 trimPosition += shiftX * (k + 1) * scale * Vector3.right;
                 trimPosition += shiftZ * (k + 1) * scale * Vector3.forward;
-                trims[i].Transform.position = trimPosition;
-                trims[i].Transform.position = new Vector3(trims[i].Transform.position.x, y, trims[i].Transform.position.z);
-                trims[i].Transform.rotation = trimRotations[shiftX + 2 * shiftZ];
-                trims[i].Transform.localScale = new Vector3(scale, 1, scale);
+                _trims[i].Transform.position = trimPosition;
+                _trims[i].Transform.position = new Vector3(_trims[i].Transform.position.x, y, _trims[i].Transform.position.z);
+                _trims[i].Transform.rotation = _trimRotations[shiftX + 2 * shiftZ];
+                _trims[i].Transform.localScale = new Vector3(scale, 1, scale);
 
-                rings[i].Transform.position = snappedPosition + centerOffset;
-                rings[i].Transform.position = new Vector3(rings[i].Transform.position.x, y, rings[i].Transform.position.z);
-                rings[i].Transform.localScale = new Vector3(scale, 1, scale);
+                _rings[i].Transform.position = snappedPosition + centerOffset;
+                _rings[i].Transform.position = new Vector3(_rings[i].Transform.position.x, y, _rings[i].Transform.position.z);
+                _rings[i].Transform.localScale = new Vector3(scale, 1, scale);
                 previousSnappedPosition = snappedPosition;
             }
 
-            scale = lengthScale * 2 * Mathf.Pow(2, clipLevels);
-            skirt.Transform.position = new Vector3(-1, 0, -1) * scale * (skirtSize + 0.5f - 0.5f / GridSize()) + previousSnappedPosition;
-            skirt.Transform.position = new Vector3(skirt.Transform.position.x, y, skirt.Transform.position.z);
-            skirt.Transform.localScale = new Vector3(scale, 1, scale);
+            scale = _lengthScale * 2 * Mathf.Pow(2, _clipLevels);
+            _skirt.Transform.position = new Vector3(-1, 0, -1) * scale * (_skirtSize + 0.5f - 0.5f / GridSize()) + previousSnappedPosition;
+            _skirt.Transform.position = new Vector3(_skirt.Transform.position.x, y, _skirt.Transform.position.z);
+            _skirt.Transform.localScale = new Vector3(scale, 1, scale);
         }
 
         int ActiveLodlevels()
         {
-            return clipLevels - Mathf.Clamp((int)Mathf.Log((1.7f * Mathf.Abs(viewer.position.y) + 1) / lengthScale, 2), 0, clipLevels);
+            return _clipLevels - Mathf.Clamp((int)Mathf.Log((1.7f * Mathf.Abs(_viewer.position.y) + 1) / _lengthScale, 2), 0, _clipLevels);
         }
 
         float ClipLevelScale(int level, int activeLevels)
         {
-            return lengthScale / GridSize() * Mathf.Pow(2, clipLevels - activeLevels + level + 1);
+            return _lengthScale / GridSize() * Mathf.Pow(2, _clipLevels - activeLevels + level + 1);
         }
 
         Vector3 OffsetFromCenter(int level, int activeLevels)
         {
-            return (Mathf.Pow(2, clipLevels) + GeometricProgressionSum(2, 2, clipLevels - activeLevels + level + 1, clipLevels - 1))
-                * lengthScale / GridSize() * (GridSize() - 1) / 2 * new Vector3(-1, 0, -1);
+            return (Mathf.Pow(2, _clipLevels) + GeometricProgressionSum(2, 2, _clipLevels - activeLevels + level + 1, _clipLevels - 1))
+                * _lengthScale / GridSize() * (GridSize() - 1) / 2 * new Vector3(-1, 0, -1);
         }
 
         float GeometricProgressionSum(float b0, float q, int n1, int n2)
@@ -199,7 +198,7 @@ namespace CodeBase.MapGeneration
 
         int GridSize()
         {
-            return 4 * vertexDensity + 1;
+            return 4 * _vertexDensity + 1;
         }
 
         Vector3 Snap(Vector3 coords, float scale)
@@ -225,19 +224,19 @@ namespace CodeBase.MapGeneration
                 if (child != transform)
                     Destroy(child.gameObject);
             }
-            rings.Clear();
-            trims.Clear();
+            _rings.Clear();
+            _trims.Clear();
 
             int k = GridSize();
-            center = InstantiateElement("Center", CreatePlaneMesh(2 * k, 2 * k, 1, Seams.All), materials[materials.Length - 1]);
+            _center = InstantiateElement("Center", CreatePlaneMesh(2 * k, 2 * k, 1, Seams.All), _materials[_materials.Length - 1]);
             Mesh ring = CreateRingMesh(k, 1);
             Mesh trim = CreateTrimMesh(k, 1);
-            for (int i = 0; i < clipLevels; i++)
+            for (int i = 0; i < _clipLevels; i++)
             {
-                rings.Add(InstantiateElement("Ring " + i, ring, materials[materials.Length - 1]));
-                trims.Add(InstantiateElement("Trim " + i, trim, materials[materials.Length - 1]));
+                _rings.Add(InstantiateElement("Ring " + i, ring, _materials[_materials.Length - 1]));
+                _trims.Add(InstantiateElement("Trim " + i, trim, _materials[_materials.Length - 1]));
             }
-            skirt = InstantiateElement("Skirt", CreateSkirtMesh(k, skirtSize), materials[materials.Length - 1]);
+            _skirt = InstantiateElement("Skirt", CreateSkirtMesh(k, _skirtSize), _materials[_materials.Length - 1]);
         }
 
         Element InstantiateElement(string name, Mesh mesh, Material mat)

@@ -1,13 +1,14 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase.MapGeneration
 {
     public class Daytime : MonoBehaviour
     {
-        public GameObject sun;
+        [FormerlySerializedAs("sun")] public GameObject _sun;
         private void FixedUpdate()
         {
-            sun.transform.Rotate(Vector3.right * Time.deltaTime * -0.5f);
+            _sun.transform.Rotate(Vector3.right * Time.deltaTime * -0.5f);
         }
     }
 }

@@ -2,15 +2,16 @@ using System.Collections;
 using CodeBase._CrossPlatformInput;
 using CodeBase._Main.Player.Vehicles_Aeroplane;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main.Player
 {
 	[RequireComponent(typeof(AeroplaneController))]
 	public class AirplaneUserControl : MonoBehaviour
 	{
-		public float maxRollAngle = 80f;
+		[FormerlySerializedAs("maxRollAngle")] public float _maxRollAngle = 80f;
 
-		public float maxPitchAngle = 80f;
+		[FormerlySerializedAs("maxPitchAngle")] public float _maxPitchAngle = 80f;
 
 		private AeroplaneController _airplane;
 		
@@ -42,8 +43,8 @@ namespace CodeBase._Main.Player
 
 		private void AdjustInputForMobileControls(ref float roll, ref float pitch, ref float throttle)
 		{
-			float num = roll * maxRollAngle * 0.0174532924f;
-			float num2 = pitch * maxPitchAngle * 0.0174532924f;
+			float num = roll * _maxRollAngle * 0.0174532924f;
+			float num2 = pitch * _maxPitchAngle * 0.0174532924f;
 			roll = Mathf.Clamp(num - _airplane.RollAngle, -1f, 1f);
 			pitch = Mathf.Clamp(num2 - _airplane.PitchAngle, -1f, 1f);
 			float num3 = throttle * 0.5f + 0.5f;

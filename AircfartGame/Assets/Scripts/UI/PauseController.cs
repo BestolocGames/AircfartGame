@@ -1,14 +1,25 @@
 using CodeBase._CrossPlatformInput;
 using CodeBase._Main;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace UI
 {
 	public class PauseController : MonoBehaviour
 	{
-		public static event OnPauseAction OnPauseEvent;
+		[FormerlySerializedAs("pausePanelObject")] public GameObject _pausePanelObject;
 
-		public static event OnUnPauseAction OnUnPauseEvent;
+		private bool _paused;
+
+		private MusicController _musicController;
+
+		public delegate void PauseAction();
+
+		public delegate void UnPauseAction();
+		
+		public static event PauseAction OnPauseEvent;
+
+		public static event UnPauseAction OnUnPauseEvent;
 
 		private void Start()
 		{
@@ -21,15 +32,11 @@ namespace UI
 			{
 				if (!_paused)
 				{
-					if (!pausePanelObject.activeSelf)
-					{
+					if (!_pausePanelObject.activeSelf) 
 						Pause();
-					}
 				}
-				else if (pausePanelObject.activeSelf)
-				{
+				else if (_pausePanelObject.activeSelf) 
 					Unpause();
-				}
 			}
 		}
 
@@ -37,11 +44,10 @@ namespace UI
 		{
 			_paused = true;
 			Time.timeScale = 0f;
-			pausePanelObject.SetActive(true);
-			if (_musicController)
-			{
+			_pausePanelObject.SetActive(true);
+			if (_musicController) 
 				_musicController.Pause();
-			}
+			
 			PublishPause();
 		}
 
@@ -49,38 +55,23 @@ namespace UI
 		{
 			_paused = false;
 			Time.timeScale = 1f;
-			pausePanelObject.SetActive(false);
-			if (_musicController)
-			{
+			_pausePanelObject.SetActive(false);
+			if (_musicController) 
 				_musicController.UnPause();
-			}
+			
 			PublishUnPause();
 		}
 
-		public virtual void PublishPause()
+		protected virtual void PublishPause()
 		{
-			if (OnPauseEvent != null)
-			{
+			if (OnPauseEvent != null) 
 				OnPauseEvent();
-			}
 		}
 
-		public virtual void PublishUnPause()
+		protected virtual void PublishUnPause()
 		{
-			if (OnUnPauseEvent != null)
-			{
+			if (OnUnPauseEvent != null) 
 				OnUnPauseEvent();
-			}
 		}
-
-		public GameObject pausePanelObject;
-
-		private bool _paused;
-
-		private MusicController _musicController;
-
-		public delegate void OnPauseAction();
-
-		public delegate void OnUnPauseAction();
 	}
 }

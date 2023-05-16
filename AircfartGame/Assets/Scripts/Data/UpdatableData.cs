@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Data
 {
 	public class UpdatableData : ScriptableObject {
 
 		public event System.Action OnValuesUpdated;
-		public bool autoUpdate;
+		[FormerlySerializedAs("autoUpdate")] public bool _autoUpdate;
 
 #if UNITY_EDITOR
 
 		protected virtual void OnValidate() {
-			if (autoUpdate) {
+			if (_autoUpdate) {
 				UnityEditor.EditorApplication.update += NotifyOfUpdatedValues;
 			}
 		}

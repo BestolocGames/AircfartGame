@@ -1,34 +1,35 @@
 ﻿using CodeBase._Main.Player.Vehicles_Aeroplane;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Data
 {
 	[CreateAssetMenu()]
 	public class HeightMapSettings : UpdatableData {
 
-		public NoiseSettings noiseSettings;
+		[FormerlySerializedAs("noiseSettings")] public NoiseSettings _noiseSettings;
 
-		public bool useFalloff;
+		[FormerlySerializedAs("useFalloff")] public bool _useFalloff;
 
-		public float heightMultiplier;
-		public AnimationCurve heightCurve;
+		[FormerlySerializedAs("heightMultiplier")] public float _heightMultiplier;
+		[FormerlySerializedAs("heightCurve")] public AnimationCurve _heightCurve;
 
-		public float minHeight {
+		public float MinHeight {
 			get {
-				return heightMultiplier * heightCurve.Evaluate (0);
+				return _heightMultiplier * _heightCurve.Evaluate (0);
 			}
 		}
 
-		public float maxHeight {
+		public float MaxHeight {
 			get {
-				return heightMultiplier * heightCurve.Evaluate (1);
+				return _heightMultiplier * _heightCurve.Evaluate (1);
 			}
 		}
 
 #if UNITY_EDITOR
 
 		protected override void OnValidate() {
-			noiseSettings.ValidateValues ();
+			_noiseSettings.ValidateValues ();
 			base.OnValidate ();
 		}
 #endif

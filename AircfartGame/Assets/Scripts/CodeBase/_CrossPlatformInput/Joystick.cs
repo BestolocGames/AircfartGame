@@ -1,27 +1,28 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	public class Joystick : MonoBehaviour, IPointerDownHandler, IEventSystemHandler, IPointerUpHandler, IDragHandler
 	{
-		public int MovementRange = 100;
+		[FormerlySerializedAs("MovementRange")] public int _movementRange = 100;
 
-		public AxisOption axesToUse;
+		[FormerlySerializedAs("axesToUse")] public AxisOption _axesToUse;
 
-		public string horizontalAxisName = "Horizontal";
+		[FormerlySerializedAs("horizontalAxisName")] public string _horizontalAxisName = "Horizontal";
 
-		public string verticalAxisName = "Vertical";
+		[FormerlySerializedAs("verticalAxisName")] public string _verticalAxisName = "Vertical";
 
-		private Vector3 m_StartPos;
+		private Vector3 _mStartPos;
 
-		private bool m_UseX;
+		private bool _useHorizontal;
 
-		private bool m_UseY;
+		private bool _useVertical;
 
-		private CrossPlatformInputManager.VirtualAxis m_HorizontalVirtualAxis;
+		private CrossPlatformInputManager.VirtualAxis _horizontalVirtualAxis;
 
-		private CrossPlatformInputManager.VirtualAxis m_VerticalVirtualAxis;
+		private CrossPlatformInputManager.VirtualAxis _verticalVirtualAxis;
 
 		public enum AxisOption
 		{
@@ -38,63 +39,60 @@ namespace CodeBase._CrossPlatformInput
 
 		private void Start()
 		{
-			m_StartPos = transform.position;
+			_mStartPos = transform.position;
 		}
 
 		private void UpdateVirtualAxes(Vector3 value)
 		{
-			Vector3 a = m_StartPos - value;
+			Vector3 a = _mStartPos - value;
 			a.y = -a.y;
-			a /= (float)MovementRange;
-			if (m_UseX)
-			{
-				m_HorizontalVirtualAxis.Update(-a.x);
-			}
-			if (m_UseY)
-			{
-				m_VerticalVirtualAxis.Update(a.y);
-			}
+			a /= (float)_movementRange;
+			if (_useHorizontal) 
+				_horizontalVirtualAxis.Update(-a.x);
+			if (_useVertical) 
+				_verticalVirtualAxis.Update(a.y);
 		}
 
 		private void CreateVirtualAxes()
 		{
-			m_UseX = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyHorizontal);
-			m_UseY = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyVertical);
-			if (m_UseX)
+			_useHorizontal = (_axesToUse == AxisOption.Both || _axesToUse == AxisOption.OnlyHorizontal);
+			_useVertical = (_axesToUse == AxisOption.Both || _axesToUse == AxisOption.OnlyVertical);
+			
+			if (_useHorizontal)
 			{
-				m_HorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(horizontalAxisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(m_HorizontalVirtualAxis);
+				_horizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(_horizontalAxisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_horizontalVirtualAxis);
 			}
-			if (m_UseY)
+			if (_useVertical)
 			{
-				m_VerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(verticalAxisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(m_VerticalVirtualAxis);
+				_verticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(_verticalAxisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_verticalVirtualAxis);
 			}
 		}
 
 		public void OnDrag(PointerEventData data)
 		{
 			Vector3 zero = Vector3.zero;
-			if (m_UseX)
+			if (_useHorizontal)
 			{
-				int num = (int)(data.position.x - m_StartPos.x);
-				num = Mathf.Clamp(num, -MovementRange, MovementRange);
+				int num = (int)(data.position.x - _mStartPos.x);
+				num = Mathf.Clamp(num, -_movementRange, _movementRange);
 				zero.x = (float)num;
 			}
-			if (m_UseY)
+			if (_useVertical)
 			{
-				int num2 = (int)(data.position.y - m_StartPos.y);
-				num2 = Mathf.Clamp(num2, -MovementRange, MovementRange);
+				int num2 = (int)(data.position.y - _mStartPos.y);
+				num2 = Mathf.Clamp(num2, -_movementRange, _movementRange);
 				zero.y = (float)num2;
 			}
-			transform.position = new Vector3(m_StartPos.x + zero.x, m_StartPos.y + zero.y, m_StartPos.z + zero.z);
+			transform.position = new Vector3(_mStartPos.x + zero.x, _mStartPos.y + zero.y, _mStartPos.z + zero.z);
 			UpdateVirtualAxes(transform.position);
 		}
 
 		public void OnPointerUp(PointerEventData data)
 		{
-			transform.position = m_StartPos;
-			UpdateVirtualAxes(m_StartPos);
+			transform.position = _mStartPos;
+			UpdateVirtualAxes(_mStartPos);
 		}
 
 		public void OnPointerDown(PointerEventData data)
@@ -103,16 +101,10 @@ namespace CodeBase._CrossPlatformInput
 
 		private void OnDisable()
 		{
-			if (m_UseX)
-			{
-				m_HorizontalVirtualAxis.Remove();
-			}
-			if (m_UseY)
-			{
-				m_VerticalVirtualAxis.Remove();
-			}
+			if (_useHorizontal) 
+				_horizontalVirtualAxis.Remove();
+			if (_useVertical) 
+				_verticalVirtualAxis.Remove();
 		}
-
-
 	}
 }

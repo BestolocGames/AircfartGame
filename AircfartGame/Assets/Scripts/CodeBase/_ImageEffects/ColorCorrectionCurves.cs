@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._ImageEffects
 {
@@ -9,7 +10,7 @@ namespace CodeBase._ImageEffects
 		private new void Start()
 		{
 			base.Start();
-			updateTexturesOnStartup = true;
+			_updateTexturesOnStartup = true;
 		}
 
 		private void Awake()
@@ -18,60 +19,60 @@ namespace CodeBase._ImageEffects
 
 		public override bool CheckResources()
 		{
-			CheckSupport(mode == ColorCorrectionMode.Advanced);
-			ccMaterial = CheckShaderAndCreateMaterial(simpleColorCorrectionCurvesShader, ccMaterial);
-			ccDepthMaterial = CheckShaderAndCreateMaterial(colorCorrectionCurvesShader, ccDepthMaterial);
-			selectiveCcMaterial = CheckShaderAndCreateMaterial(colorCorrectionSelectiveShader, selectiveCcMaterial);
-			if (!rgbChannelTex)
+			CheckSupport(_mode == ColorCorrectionMode.Advanced);
+			_ccMaterial = CheckShaderAndCreateMaterial(_simpleColorCorrectionCurvesShader, _ccMaterial);
+			_ccDepthMaterial = CheckShaderAndCreateMaterial(_colorCorrectionCurvesShader, _ccDepthMaterial);
+			_selectiveCcMaterial = CheckShaderAndCreateMaterial(_colorCorrectionSelectiveShader, _selectiveCcMaterial);
+			if (!_rgbChannelTex)
 			{
-				rgbChannelTex = new Texture2D(256, 4, TextureFormat.ARGB32, false, true);
+				_rgbChannelTex = new Texture2D(256, 4, TextureFormat.ARGB32, false, true);
 			}
-			if (!rgbDepthChannelTex)
+			if (!_rgbDepthChannelTex)
 			{
-				rgbDepthChannelTex = new Texture2D(256, 4, TextureFormat.ARGB32, false, true);
+				_rgbDepthChannelTex = new Texture2D(256, 4, TextureFormat.ARGB32, false, true);
 			}
-			if (!zCurveTex)
+			if (!_zCurveTex)
 			{
-				zCurveTex = new Texture2D(256, 1, TextureFormat.ARGB32, false, true);
+				_zCurveTex = new Texture2D(256, 1, TextureFormat.ARGB32, false, true);
 			}
-			rgbChannelTex.hideFlags = HideFlags.DontSave;
-			rgbDepthChannelTex.hideFlags = HideFlags.DontSave;
-			zCurveTex.hideFlags = HideFlags.DontSave;
-			rgbChannelTex.wrapMode = TextureWrapMode.Clamp;
-			rgbDepthChannelTex.wrapMode = TextureWrapMode.Clamp;
-			zCurveTex.wrapMode = TextureWrapMode.Clamp;
-			if (!isSupported)
+			_rgbChannelTex.hideFlags = HideFlags.DontSave;
+			_rgbDepthChannelTex.hideFlags = HideFlags.DontSave;
+			_zCurveTex.hideFlags = HideFlags.DontSave;
+			_rgbChannelTex.wrapMode = TextureWrapMode.Clamp;
+			_rgbDepthChannelTex.wrapMode = TextureWrapMode.Clamp;
+			_zCurveTex.wrapMode = TextureWrapMode.Clamp;
+			if (!IsSupported)
 			{
 				ReportAutoDisable();
 			}
-			return isSupported;
+			return IsSupported;
 		}
 
 		public void UpdateParameters()
 		{
 			CheckResources();
-			if (redChannel != null && greenChannel != null && blueChannel != null)
+			if (_redChannel != null && _greenChannel != null && _blueChannel != null)
 			{
 				for (float num = 0f; num <= 1f; num += 0.003921569f)
 				{
-					float num2 = Mathf.Clamp(redChannel.Evaluate(num), 0f, 1f);
-					float num3 = Mathf.Clamp(greenChannel.Evaluate(num), 0f, 1f);
-					float num4 = Mathf.Clamp(blueChannel.Evaluate(num), 0f, 1f);
-					rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num2, num2, num2));
-					rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 1, new Color(num3, num3, num3));
-					rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 2, new Color(num4, num4, num4));
-					float num5 = Mathf.Clamp(zCurve.Evaluate(num), 0f, 1f);
-					zCurveTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num5, num5, num5));
-					num2 = Mathf.Clamp(depthRedChannel.Evaluate(num), 0f, 1f);
-					num3 = Mathf.Clamp(depthGreenChannel.Evaluate(num), 0f, 1f);
-					num4 = Mathf.Clamp(depthBlueChannel.Evaluate(num), 0f, 1f);
-					rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num2, num2, num2));
-					rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 1, new Color(num3, num3, num3));
-					rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 2, new Color(num4, num4, num4));
+					float num2 = Mathf.Clamp(_redChannel.Evaluate(num), 0f, 1f);
+					float num3 = Mathf.Clamp(_greenChannel.Evaluate(num), 0f, 1f);
+					float num4 = Mathf.Clamp(_blueChannel.Evaluate(num), 0f, 1f);
+					_rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num2, num2, num2));
+					_rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 1, new Color(num3, num3, num3));
+					_rgbChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 2, new Color(num4, num4, num4));
+					float num5 = Mathf.Clamp(_zCurve.Evaluate(num), 0f, 1f);
+					_zCurveTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num5, num5, num5));
+					num2 = Mathf.Clamp(_depthRedChannel.Evaluate(num), 0f, 1f);
+					num3 = Mathf.Clamp(_depthGreenChannel.Evaluate(num), 0f, 1f);
+					num4 = Mathf.Clamp(_depthBlueChannel.Evaluate(num), 0f, 1f);
+					_rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 0, new Color(num2, num2, num2));
+					_rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 1, new Color(num3, num3, num3));
+					_rgbDepthChannelTex.SetPixel((int)Mathf.Floor(num * 255f), 2, new Color(num4, num4, num4));
 				}
-				rgbChannelTex.Apply();
-				rgbDepthChannelTex.Apply();
-				zCurveTex.Apply();
+				_rgbChannelTex.Apply();
+				_rgbDepthChannelTex.Apply();
+				_zCurveTex.Apply();
 			}
 		}
 
@@ -87,118 +88,118 @@ namespace CodeBase._ImageEffects
 				Graphics.Blit(source, destination);
 				return;
 			}
-			if (updateTexturesOnStartup)
+			if (_updateTexturesOnStartup)
 			{
 				UpdateParameters();
-				updateTexturesOnStartup = false;
+				_updateTexturesOnStartup = false;
 			}
-			if (useDepthCorrection)
+			if (_useDepthCorrection)
 			{
 				GetComponent<Camera>().depthTextureMode |= DepthTextureMode.Depth;
 			}
 			RenderTexture renderTexture = destination;
-			if (selectiveCc)
+			if (_selectiveCc)
 			{
 				renderTexture = RenderTexture.GetTemporary(source.width, source.height);
 			}
-			if (useDepthCorrection)
+			if (_useDepthCorrection)
 			{
-				ccDepthMaterial.SetTexture("_RgbTex", rgbChannelTex);
-				ccDepthMaterial.SetTexture("_ZCurve", zCurveTex);
-				ccDepthMaterial.SetTexture("_RgbDepthTex", rgbDepthChannelTex);
-				ccDepthMaterial.SetFloat("_Saturation", saturation);
-				Graphics.Blit(source, renderTexture, ccDepthMaterial);
+				_ccDepthMaterial.SetTexture("_RgbTex", _rgbChannelTex);
+				_ccDepthMaterial.SetTexture("_ZCurve", _zCurveTex);
+				_ccDepthMaterial.SetTexture("_RgbDepthTex", _rgbDepthChannelTex);
+				_ccDepthMaterial.SetFloat("_Saturation", _saturation);
+				Graphics.Blit(source, renderTexture, _ccDepthMaterial);
 			}
 			else
 			{
-				ccMaterial.SetTexture("_RgbTex", rgbChannelTex);
-				ccMaterial.SetFloat("_Saturation", saturation);
-				Graphics.Blit(source, renderTexture, ccMaterial);
+				_ccMaterial.SetTexture("_RgbTex", _rgbChannelTex);
+				_ccMaterial.SetFloat("_Saturation", _saturation);
+				Graphics.Blit(source, renderTexture, _ccMaterial);
 			}
-			if (selectiveCc)
+			if (_selectiveCc)
 			{
-				selectiveCcMaterial.SetColor("selColor", selectiveFromColor);
-				selectiveCcMaterial.SetColor("targetColor", selectiveToColor);
-				Graphics.Blit(renderTexture, destination, selectiveCcMaterial);
+				_selectiveCcMaterial.SetColor("selColor", _selectiveFromColor);
+				_selectiveCcMaterial.SetColor("targetColor", _selectiveToColor);
+				Graphics.Blit(renderTexture, destination, _selectiveCcMaterial);
 				RenderTexture.ReleaseTemporary(renderTexture);
 			}
 		}
 
-		public AnimationCurve redChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("redChannel")] public AnimationCurve _redChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public AnimationCurve greenChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("greenChannel")] public AnimationCurve _greenChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public AnimationCurve blueChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("blueChannel")] public AnimationCurve _blueChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public bool useDepthCorrection;
+		[FormerlySerializedAs("useDepthCorrection")] public bool _useDepthCorrection;
 
-		public AnimationCurve zCurve = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("zCurve")] public AnimationCurve _zCurve = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public AnimationCurve depthRedChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("depthRedChannel")] public AnimationCurve _depthRedChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public AnimationCurve depthGreenChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("depthGreenChannel")] public AnimationCurve _depthGreenChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		public AnimationCurve depthBlueChannel = new AnimationCurve(new Keyframe[]
+		[FormerlySerializedAs("depthBlueChannel")] public AnimationCurve _depthBlueChannel = new AnimationCurve(new Keyframe[]
 		{
 			new Keyframe(0f, 0f),
 			new Keyframe(1f, 1f)
 		});
 
-		private Material ccMaterial;
+		private Material _ccMaterial;
 
-		private Material ccDepthMaterial;
+		private Material _ccDepthMaterial;
 
-		private Material selectiveCcMaterial;
+		private Material _selectiveCcMaterial;
 
-		private Texture2D rgbChannelTex;
+		private Texture2D _rgbChannelTex;
 
-		private Texture2D rgbDepthChannelTex;
+		private Texture2D _rgbDepthChannelTex;
 
-		private Texture2D zCurveTex;
+		private Texture2D _zCurveTex;
 
-		public float saturation = 1f;
+		[FormerlySerializedAs("saturation")] public float _saturation = 1f;
 
-		public bool selectiveCc;
+		[FormerlySerializedAs("selectiveCc")] public bool _selectiveCc;
 
-		public Color selectiveFromColor = Color.white;
+		[FormerlySerializedAs("selectiveFromColor")] public Color _selectiveFromColor = Color.white;
 
-		public Color selectiveToColor = Color.white;
+		[FormerlySerializedAs("selectiveToColor")] public Color _selectiveToColor = Color.white;
 
-		public ColorCorrectionMode mode;
+		[FormerlySerializedAs("mode")] public ColorCorrectionMode _mode;
 
-		public bool updateTextures = true;
+		[FormerlySerializedAs("updateTextures")] public bool _updateTextures = true;
 
-		public Shader colorCorrectionCurvesShader;
+		[FormerlySerializedAs("colorCorrectionCurvesShader")] public Shader _colorCorrectionCurvesShader;
 
-		public Shader simpleColorCorrectionCurvesShader;
+		[FormerlySerializedAs("simpleColorCorrectionCurvesShader")] public Shader _simpleColorCorrectionCurvesShader;
 
-		public Shader colorCorrectionSelectiveShader;
+		[FormerlySerializedAs("colorCorrectionSelectiveShader")] public Shader _colorCorrectionSelectiveShader;
 
-		private bool updateTexturesOnStartup = true;
+		private bool _updateTexturesOnStartup = true;
 
 		public enum ColorCorrectionMode
 		{

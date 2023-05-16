@@ -2,6 +2,7 @@ using System.Collections;
 using CodeBase._CrossPlatformInput;
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Main
 {
@@ -23,7 +24,7 @@ namespace CodeBase._Main
 		{
 			if (ControlsPrefs.IsTiltEnabled)
 			{
-				StartCoroutine(CalibrateCoroutine(delayAfterStartPlay));
+				StartCoroutine(CalibrateCoroutine(_delayAfterStartPlay));
 			}
 		}
 
@@ -41,19 +42,19 @@ namespace CodeBase._Main
 			{
 				yield return new WaitForSeconds(delay);
 			}
-			if (calibrationPopup != null)
+			if (_calibrationPopup != null)
 			{
-				calibrationPopup.SetActive(true);
+				_calibrationPopup.SetActive(true);
 			}
 			yield return new WaitForSeconds(3f);
-			if (calibrationTarget == null)
+			if (_calibrationTarget == null)
 			{
 				yield break;
 			}
 			float currentAngle = 0f;
 			if (Input.acceleration != Vector3.zero)
 			{
-				TiltInput.AxisOptions tiltAroundAxis = calibrationTarget.tiltAroundAxis;
+				TiltInput.AxisOptions tiltAroundAxis = _calibrationTarget._tiltAroundAxis;
 				if (tiltAroundAxis != TiltInput.AxisOptions.ForwardAxis)
 				{
 					if (tiltAroundAxis == TiltInput.AxisOptions.SidewaysAxis)
@@ -66,18 +67,18 @@ namespace CodeBase._Main
 					currentAngle = Mathf.Atan2(Input.acceleration.x, -Input.acceleration.y) * 57.29578f;
 				}
 			}
-			calibrationTarget.centreAngleOffset = -currentAngle;
-			if (calibrationPopup != null)
+			_calibrationTarget._centreAngleOffset = -currentAngle;
+			if (_calibrationPopup != null)
 			{
-				calibrationPopup.SetActive(false);
+				_calibrationPopup.SetActive(false);
 			}
 			yield break;
 		}
 
-		public TiltInput calibrationTarget;
+		[FormerlySerializedAs("calibrationTarget")] public TiltInput _calibrationTarget;
 
-		public GameObject calibrationPopup;
+		[FormerlySerializedAs("calibrationPopup")] public GameObject _calibrationPopup;
 
-		public float delayAfterStartPlay = 8f;
+		[FormerlySerializedAs("delayAfterStartPlay")] public float _delayAfterStartPlay = 8f;
 	}
 }

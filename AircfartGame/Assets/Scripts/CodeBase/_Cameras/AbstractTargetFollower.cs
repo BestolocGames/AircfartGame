@@ -1,21 +1,22 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._Cameras
 {
 	public abstract class AbstractTargetFollower : MonoBehaviour
 	{
-		[SerializeField]
-		protected Transform m_Target;
+		 [SerializeField]
+		protected Transform _target;
+
+		 [SerializeField]
+		private bool _autoTargetPlayer = true;
 
 		[SerializeField]
-		private bool m_AutoTargetPlayer = true;
+		private UpdateType _updateType;
 
-		[SerializeField]
-		private UpdateType m_UpdateType;
-
-		protected Rigidbody targetRigidbody;
+		protected Rigidbody TargetRigidbody;
 		
-		public Transform Target => m_Target;
+		public Transform Target => _target;
 
 		public enum UpdateType
 		{
@@ -26,70 +27,47 @@ namespace CodeBase._Cameras
 		
 		protected virtual void Start()
 		{
-			if (m_AutoTargetPlayer)
-			{
+			if (_autoTargetPlayer) 
 				FindAndTargetPlayer();
-			}
-			if (m_Target == null)
-			{
+			if (_target == null)
 				return;
-			}
-			targetRigidbody = m_Target.GetComponent<Rigidbody>();
+			TargetRigidbody = _target.GetComponent<Rigidbody>();
 		}
 
 		private void FixedUpdate()
 		{
-			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
-			{
+			if (_autoTargetPlayer && (_target == null || !_target.gameObject.activeSelf)) 
 				FindAndTargetPlayer();
-			}
-			if (m_UpdateType == UpdateType.FixedUpdate)
-			{
+			if (_updateType == UpdateType.FixedUpdate) 
 				FollowTarget(Time.deltaTime);
-			}
 		}
 
 		private void LateUpdate()
 		{
-			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
-			{
+			if (_autoTargetPlayer && (_target == null || !_target.gameObject.activeSelf)) 
 				FindAndTargetPlayer();
-			}
-			if (m_UpdateType == UpdateType.LateUpdate)
-			{
+			if (_updateType == UpdateType.LateUpdate) 
 				FollowTarget(Time.deltaTime);
-			}
 		}
 
 		public void ManualUpdate()
 		{
-			if (m_AutoTargetPlayer && (m_Target == null || !m_Target.gameObject.activeSelf))
-			{
+			if (_autoTargetPlayer && (_target == null || !_target.gameObject.activeSelf)) 
 				FindAndTargetPlayer();
-			}
-			if (m_UpdateType == UpdateType.ManualUpdate)
-			{
+			if (_updateType == UpdateType.ManualUpdate) 
 				FollowTarget(Time.deltaTime);
-			}
 		}
 
 		protected abstract void FollowTarget(float deltaTime);
 
-		public void FindAndTargetPlayer()
+		private void FindAndTargetPlayer()
 		{
 			GameObject gameObject = GameObject.FindGameObjectWithTag("Player");
-			if (gameObject)
-			{
+			if (gameObject) 
 				SetTarget(gameObject.transform);
-			}
 		}
 
-		public virtual void SetTarget(Transform newTransform)
-		{
-			m_Target = newTransform;
-		}
-
-
-
+		protected virtual void SetTarget(Transform newTransform) => 
+			_target = newTransform;
 	}
 }

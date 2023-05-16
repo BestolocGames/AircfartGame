@@ -1,5 +1,6 @@
 using UI;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main
@@ -18,38 +19,38 @@ namespace CodeBase._Main
 
 		public virtual void FadeOut()
 		{
-			if (playButton)
+			if (_playButton)
 			{
-				playButton.interactable = false;
+				_playButton.interactable = false;
 			}
-			if (controlsButton)
+			if (_controlsButton)
 			{
-				controlsButton.interactable = false;
+				_controlsButton.interactable = false;
 			}
-			if (gameLogoImage)
+			if (_gameLogoImage)
 			{
-				gameLogoImage.CrossFadeAlpha(0f, 0.5f, false);
+				_gameLogoImage.CrossFadeAlpha(0f, 0.5f, false);
 			}
-			if (playButton)
+			if (_playButton)
 			{
-				Fader.FadeAlpha(this, playButton, false, 0.5f, null);
+				Fader.FadeAlpha(this, _playButton, false, 0.5f, null);
 			}
-			if (controlsButton)
+			if (_controlsButton)
 			{
-				Fader.FadeAlpha(this, controlsButton, false, 0.5f, null);
+				Fader.FadeAlpha(this, _controlsButton, false, 0.5f, null);
 			}
-			if (instructionsImage)
+			if (_instructionsImage)
 			{
-				instructionsImage.CrossFadeAlpha(0f, 0.5f, false);
+				_instructionsImage.CrossFadeAlpha(0f, 0.5f, false);
 			}
 		}
 
-		public CanvasGroup playButton;
+		[FormerlySerializedAs("playButton")] public CanvasGroup _playButton;
 
-		public CanvasGroup controlsButton;
+		[FormerlySerializedAs("controlsButton")] public CanvasGroup _controlsButton;
 
-		public Image gameLogoImage;
+		[FormerlySerializedAs("gameLogoImage")] public Image _gameLogoImage;
 
-		public Image instructionsImage;
+		[FormerlySerializedAs("instructionsImage")] public Image _instructionsImage;
 	}
 }

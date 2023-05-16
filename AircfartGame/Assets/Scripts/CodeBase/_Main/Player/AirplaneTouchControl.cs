@@ -1,6 +1,7 @@
 using CodeBase._CrossPlatformInput;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CodeBase._Main.Player
@@ -9,44 +10,44 @@ namespace CodeBase._Main.Player
 	{
 		#region Fields
 
-		public AxisOption axesToUse;
+		[FormerlySerializedAs("axesToUse")] public AxisOption _axesToUse;
 
-		public string horizontalAxisName = "Horizontal";
+		[FormerlySerializedAs("horizontalAxisName")] public string _horizontalAxisName = "Horizontal";
 
-		public string verticalAxisName = "Vertical";
+		[FormerlySerializedAs("verticalAxisName")] public string _verticalAxisName = "Vertical";
 
-		public float Xsensitivity = 1f;
+		[FormerlySerializedAs("Xsensitivity")] public float _xsensitivity = 1f;
 
-		public float Ysensitivity = 1f;
+		[FormerlySerializedAs("Ysensitivity")] public float _ysensitivity = 1f;
 
-		[Header("Virtual joystick base to indicate steering center.")]
-		public Image baseImage;
+		[FormerlySerializedAs("baseImage")] [Header("Virtual joystick base to indicate steering center.")]
+		public Image _baseImage;
 
-		[Header("Virtual joystick handle to indicate steering direction.")]
-		public Image handleImage;
+		[FormerlySerializedAs("handleImage")] [Header("Virtual joystick handle to indicate steering direction.")]
+		public Image _handleImage;
 
-		[Header("How far can the handle move from the center of the base image.")]
-		public float maxHandleDistance = 100f;
+		[FormerlySerializedAs("maxHandleDistance")] [Header("How far can the handle move from the center of the base image.")]
+		public float _maxHandleDistance = 100f;
 
-		private Vector3 m_StartPos;
+		private Vector3 _mStartPos;
 
-		private Vector2 m_PreviousDelta;
+		private Vector2 _mPreviousDelta;
 
-		private Vector3 m_JoytickOutput;
+		private Vector3 _mJoytickOutput;
 
-		private bool m_UseX;
+		private bool _mUseX;
 
-		private bool m_UseY;
+		private bool _mUseY;
 
-		private CrossPlatformInputManager.VirtualAxis m_HorizontalVirtualAxis;
+		private CrossPlatformInputManager.VirtualAxis _mHorizontalVirtualAxis;
 
-		private CrossPlatformInputManager.VirtualAxis m_VerticalVirtualAxis;
+		private CrossPlatformInputManager.VirtualAxis _mVerticalVirtualAxis;
 
-		private bool m_Dragging;
+		private bool _mDragging;
 
-		private int m_Id = -1;
+		private int _mId = -1;
 
-		private Vector3 m_Center;
+		private Vector3 _mCenter;
 
 		#endregion
 
@@ -62,85 +63,85 @@ namespace CodeBase._Main.Player
 
 		private void CreateVirtualAxes()
 		{
-			m_UseX = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyHorizontal);
-			m_UseY = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyVertical);
-			if (m_UseX)
+			_mUseX = (_axesToUse == AxisOption.Both || _axesToUse == AxisOption.OnlyHorizontal);
+			_mUseY = (_axesToUse == AxisOption.Both || _axesToUse == AxisOption.OnlyVertical);
+			if (_mUseX)
 			{
-				m_HorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(horizontalAxisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(m_HorizontalVirtualAxis);
+				_mHorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(_horizontalAxisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_mHorizontalVirtualAxis);
 			}
-			if (m_UseY)
+			if (_mUseY)
 			{
-				m_VerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(verticalAxisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(m_VerticalVirtualAxis);
+				_mVerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis(_verticalAxisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_mVerticalVirtualAxis);
 			}
 		}
 
 		private void UpdateVirtualAxes(Vector3 value)
 		{
-			if (m_UseX) 
-				m_HorizontalVirtualAxis.Update(value.x);
-			if (m_UseY) 
-				m_VerticalVirtualAxis.Update(value.y);
+			if (_mUseX) 
+				_mHorizontalVirtualAxis.Update(value.x);
+			if (_mUseY) 
+				_mVerticalVirtualAxis.Update(value.y);
 		}
 
 		private void Update()
 		{
-			if (!m_Dragging)
+			if (!_mDragging)
 			{
 				return;
 			}
-			if (m_Dragging)
+			if (_mDragging)
 			{
-				Vector3 a = Input.touches[m_Id].position;
-				Vector3 vector = a - m_Center;
-				float d = Mathf.Min(vector.magnitude / (maxHandleDistance + 0.01f), 1f);
+				Vector3 a = Input.touches[_mId].position;
+				Vector3 vector = a - _mCenter;
+				float d = Mathf.Min(vector.magnitude / (_maxHandleDistance + 0.01f), 1f);
 				vector.Normalize();
 				vector *= d;
-				vector.x *= Xsensitivity;
-				vector.y *= -1f * Ysensitivity;
+				vector.x *= _xsensitivity;
+				vector.y *= -1f * _ysensitivity;
 				UpdateVirtualAxes(vector);
-				Vector3 localPosition = a - m_Center;
-				if (localPosition.magnitude > maxHandleDistance)
+				Vector3 localPosition = a - _mCenter;
+				if (localPosition.magnitude > _maxHandleDistance)
 				{
-					localPosition = localPosition.normalized * maxHandleDistance;
+					localPosition = localPosition.normalized * _maxHandleDistance;
 				}
-				handleImage.transform.localPosition = localPosition;
+				_handleImage.transform.localPosition = localPosition;
 			}
 		}
 
 		public void OnPointerDown(PointerEventData data)
 		{
-			m_Dragging = true;
-			m_Id = data.pointerId;
-			if (baseImage != null)
+			_mDragging = true;
+			_mId = data.pointerId;
+			if (_baseImage != null)
 			{
-				baseImage.enabled = true;
-				baseImage.transform.position = data.position;
-				handleImage.enabled = true;
-				handleImage.transform.position = baseImage.transform.position;
+				_baseImage.enabled = true;
+				_baseImage.transform.position = data.position;
+				_handleImage.enabled = true;
+				_handleImage.transform.position = _baseImage.transform.position;
 			}
-			m_Center = data.position;
+			_mCenter = data.position;
 		}
 
 		public void OnPointerUp(PointerEventData data)
 		{
-			m_Dragging = false;
-			m_Id = -1;
+			_mDragging = false;
+			_mId = -1;
 			UpdateVirtualAxes(Vector3.zero);
-			if (baseImage != null)
+			if (_baseImage != null)
 			{
-				baseImage.enabled = false;
-				handleImage.enabled = false;
+				_baseImage.enabled = false;
+				_handleImage.enabled = false;
 			}
 		}
 
 		private void OnDisable()
 		{
-			if (CrossPlatformInputManager.AxisExists(horizontalAxisName))
-				CrossPlatformInputManager.UnRegisterVirtualAxis(horizontalAxisName);
-			if (CrossPlatformInputManager.AxisExists(verticalAxisName))
-				CrossPlatformInputManager.UnRegisterVirtualAxis(verticalAxisName);
+			if (CrossPlatformInputManager.AxisExists(_horizontalAxisName))
+				CrossPlatformInputManager.UnRegisterVirtualAxis(_horizontalAxisName);
+			if (CrossPlatformInputManager.AxisExists(_verticalAxisName))
+				CrossPlatformInputManager.UnRegisterVirtualAxis(_verticalAxisName);
 		}
 
 

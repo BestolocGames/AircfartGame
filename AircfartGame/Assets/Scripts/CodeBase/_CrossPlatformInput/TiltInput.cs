@@ -1,19 +1,20 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace CodeBase._CrossPlatformInput
 {
 	public class TiltInput : MonoBehaviour
 	{
-		public AxisMapping mapping;
+		[FormerlySerializedAs("mapping")] public AxisMapping _mapping;
 
-		public AxisOptions tiltAroundAxis;
+		[FormerlySerializedAs("tiltAroundAxis")] public AxisOptions _tiltAroundAxis;
 
-		public float fullTiltAngle = 25f;
+		[FormerlySerializedAs("fullTiltAngle")] public float _fullTiltAngle = 25f;
 
-		public float centreAngleOffset;
+		[FormerlySerializedAs("centreAngleOffset")] public float _centreAngleOffset;
 
-		private CrossPlatformInputManager.VirtualAxis m_SteerAxis;
+		private CrossPlatformInputManager.VirtualAxis _mSteerAxis;
 
 		public enum AxisOptions
 		{
@@ -24,9 +25,9 @@ namespace CodeBase._CrossPlatformInput
 		[Serializable]
 		public class AxisMapping
 		{
-			public MappingType type;
+			[FormerlySerializedAs("type")] public MappingType _type;
 
-			public string axisName;
+			[FormerlySerializedAs("axisName")] public string _axisName;
 
 			public enum MappingType
 			{
@@ -39,10 +40,10 @@ namespace CodeBase._CrossPlatformInput
 		
 		private void OnEnable()
 		{
-			if (mapping.type == AxisMapping.MappingType.NamedAxis)
+			if (_mapping._type == AxisMapping.MappingType.NamedAxis)
 			{
-				m_SteerAxis = new CrossPlatformInputManager.VirtualAxis(mapping.axisName);
-				CrossPlatformInputManager.RegisterVirtualAxis(m_SteerAxis);
+				_mSteerAxis = new CrossPlatformInputManager.VirtualAxis(_mapping._axisName);
+				CrossPlatformInputManager.RegisterVirtualAxis(_mSteerAxis);
 			}
 		}
 
@@ -51,24 +52,24 @@ namespace CodeBase._CrossPlatformInput
 			float value = 0f;
 			if (Input.acceleration != Vector3.zero)
 			{
-				AxisOptions axisOptions = tiltAroundAxis;
+				AxisOptions axisOptions = _tiltAroundAxis;
 				if (axisOptions != AxisOptions.ForwardAxis)
 				{
 					if (axisOptions == AxisOptions.SidewaysAxis)
 					{
-						value = Mathf.Atan2(Input.acceleration.z, -Input.acceleration.y) * 57.29578f + centreAngleOffset;
+						value = Mathf.Atan2(Input.acceleration.z, -Input.acceleration.y) * 57.29578f + _centreAngleOffset;
 					}
 				}
 				else
 				{
-					value = Mathf.Atan2(Input.acceleration.x, -Input.acceleration.y) * 57.29578f + centreAngleOffset;
+					value = Mathf.Atan2(Input.acceleration.x, -Input.acceleration.y) * 57.29578f + _centreAngleOffset;
 				}
 			}
-			float num = Mathf.InverseLerp(-fullTiltAngle, fullTiltAngle, value) * 2f - 1f;
-			switch (mapping.type)
+			float num = Mathf.InverseLerp(-_fullTiltAngle, _fullTiltAngle, value) * 2f - 1f;
+			switch (_mapping._type)
 			{
 			case AxisMapping.MappingType.NamedAxis:
-				m_SteerAxis.Update(num);
+				_mSteerAxis.Update(num);
 				break;
 			case AxisMapping.MappingType.MousePositionX:
 				CrossPlatformInputManager.SetVirtualMousePositionX(num * (float)Screen.width);
@@ -84,8 +85,8 @@ namespace CodeBase._CrossPlatformInput
 
 		private void OnDisable()
 		{
-			CrossPlatformInputManager.UnRegisterVirtualAxis(mapping.axisName);
-			m_SteerAxis.Remove();
+			CrossPlatformInputManager.UnRegisterVirtualAxis(_mapping._axisName);
+			_mSteerAxis.Remove();
 		}
 
 
